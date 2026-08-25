@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Flame } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -7,13 +8,7 @@ import { TrendLine } from "../components/TrendLine";
 import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
 import type { HabitsData } from "../data/types";
 import { useHabitsView } from "../data/useHabitsView";
-import {
-  addDays,
-  formatMonthYear,
-  monthGridWeeks,
-  startOfWeek,
-  toISODate,
-} from "../lib/dates";
+import { formatMonthYear, monthGridWeeks } from "../lib/dates";
 import { pluralizeDays } from "../lib/pluralize";
 import { colorForScore } from "../lib/scoreRamp";
 import { calculateBestStreak, calculateStreak } from "../lib/streak";
@@ -31,8 +26,7 @@ export function StatsPage({ data }: StatsPageProps) {
   const [selectedHabitId, setSelectedHabitId] = useState(
     () => data.habits[0]?.id ?? ""
   );
-  const { today, todayISO, entriesByHabit, getOverallScoreForDate } =
-    useHabitsView(data);
+  const { today, entriesByHabit, getOverallScoreForDate } = useHabitsView(data);
 
   const monthWeeks = useMemo(() => monthGridWeeks(today), [today]);
 
@@ -40,8 +34,8 @@ export function StatsPage({ data }: StatsPageProps) {
     const map = new Map<string, number>();
     for (const week of monthWeeks) {
       for (const d of week) {
-        if (d.getMonth() !== today.getMonth()) continue;
-        const iso = toISODate(d);
+        if (!d.isSame(today, "month")) continue;
+        const iso = d.format("YYYY-MM-DD");
         const score = getOverallScoreForDate(iso);
         if (score !== undefined) map.set(iso, score);
       }
@@ -58,19 +52,19 @@ export function StatsPage({ data }: StatsPageProps) {
       period === "month"
         ? monthWeeks
             .flat()
-            .filter((d) => d.getMonth() === today.getMonth())
-            .map(toISODate)
+            .filter((d) => d.isSame(today, "month"))
+            .map((d) => d.format("YYYY-MM-DD"))
         : Array.from({ length: 7 }, (_, i) =>
-            toISODate(addDays(startOfWeek(today), i))
+            today.startOf("week").add(i, "day").format("YYYY-MM-DD")
           );
 
     return rangeDates
-      .filter((date) => date <= todayISO)
+      .filter((date) => dayjs(date).isSameOrBefore(today, "day"))
       .map((date) => ({ date, score: byDate?.get(date)?.score }))
       .filter(
         (p): p is { date: string; score: number } => p.score !== undefined
       );
-  }, [selectedHabit, entriesByHabit, period, monthWeeks, todayISO, today]);
+  }, [selectedHabit, entriesByHabit, period, monthWeeks, today]);
 
   const currentStreak = selectedHabit
     ? calculateStreak(data.entries, selectedHabit.id, today)

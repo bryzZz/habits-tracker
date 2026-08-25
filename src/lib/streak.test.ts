@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { describe, expect, it } from "vitest";
 
 import { calculateBestStreak, calculateStreak } from "./streak";
@@ -11,7 +12,7 @@ describe("calculateStreak", () => {
       entry("h1", "2026-08-23", 1),
       entry("h1", "2026-08-22", 0),
     ];
-    const today = new Date("2026-08-25T00:00:00");
+    const today = dayjs("2026-08-25");
     expect(calculateStreak(entries, "h1", today)).toBe(3);
   });
 
@@ -21,7 +22,7 @@ describe("calculateStreak", () => {
       // 2026-08-24 has no entry at all
       entry("h1", "2026-08-23", 1),
     ];
-    const today = new Date("2026-08-25T00:00:00");
+    const today = dayjs("2026-08-25");
     expect(calculateStreak(entries, "h1", today)).toBe(1);
   });
 
@@ -30,7 +31,7 @@ describe("calculateStreak", () => {
       entry("h1", "2026-08-25", 0.1),
       entry("h1", "2026-08-24", 1),
     ];
-    const today = new Date("2026-08-25T00:00:00");
+    const today = dayjs("2026-08-25");
     expect(calculateStreak(entries, "h1", today)).toBe(2);
   });
 
@@ -39,13 +40,13 @@ describe("calculateStreak", () => {
       entry("h1", "2026-08-24", 1),
       entry("h1", "2026-08-23", 1),
     ];
-    const today = new Date("2026-08-25T00:00:00");
+    const today = dayjs("2026-08-25");
     expect(calculateStreak(entries, "h1", today)).toBe(2);
   });
 
   it("returns 0 when today is unfilled and yesterday broke the streak", () => {
     const entries = [entry("h1", "2026-08-23", 1)];
-    const today = new Date("2026-08-25T00:00:00");
+    const today = dayjs("2026-08-25");
     expect(calculateStreak(entries, "h1", today)).toBe(0);
   });
 
@@ -54,7 +55,7 @@ describe("calculateStreak", () => {
       entry("h1", "2026-08-25", 1),
       entry("h2", "2026-08-24", 1),
     ];
-    const today = new Date("2026-08-25T00:00:00");
+    const today = dayjs("2026-08-25");
     expect(calculateStreak(entries, "h1", today)).toBe(1);
   });
 });

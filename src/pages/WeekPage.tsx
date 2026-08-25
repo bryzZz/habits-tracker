@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Eye } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -17,17 +18,7 @@ import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
 import type { DayEntry, HabitsData } from "../data/types";
 import { LOCAL_USER_ID, PRIORITY_ORDER } from "../data/types";
 import { useHabitsView } from "../data/useHabitsView";
-import {
-  addDays,
-  addMonths,
-  daysInMonth,
-  formatMonthYear,
-  formatWeekRange,
-  startOfMonth,
-  startOfWeek,
-  toISODate,
-  WEEKDAY_LABELS,
-} from "../lib/dates";
+import { formatMonthYear, formatWeekRange, weekdayLabels } from "../lib/dates";
 import { PRIORITY_TINT } from "../lib/priorityStyles";
 import { calculateStreak } from "../lib/streak";
 
@@ -50,21 +41,23 @@ export function WeekPage({
   onSaveEntry,
   onToggleVisibility,
 }: WeekPageProps) {
-  const [anchor, setAnchor] = useState(() => new Date());
+  const [anchor, setAnchor] = useState(() => dayjs());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [editing, setEditing] = useState<Editing | null>(null);
-  const { today, todayISO, entriesByHabit, getOverallScoreForDate } =
-    useHabitsView(data);
+  const { today, entriesByHabit, getOverallScoreForDate } = useHabitsView(data);
+  const weekdayLabelsList = useMemo(() => weekdayLabels(), []);
 
   const dates = useMemo(() => {
     if (viewMode === "week") {
-      const start = startOfWeek(anchor);
-      return Array.from({ length: 7 }, (_, i) => toISODate(addDays(start, i)));
+      const start = anchor.startOf("week");
+      return Array.from({ length: 7 }, (_, i) =>
+        start.add(i, "day").format("YYYY-MM-DD")
+      );
     }
-    const start = startOfMonth(anchor);
-    const count = daysInMonth(anchor);
+    const start = anchor.startOf("month");
+    const count = anchor.daysInMonth();
     return Array.from({ length: count }, (_, i) =>
-      toISODate(addDays(start, i))
+      start.add(i, "day").format("YYYY-MM-DD")
     );
   }, [anchor, viewMode]);
 
@@ -84,8 +77,8 @@ export function WeekPage({
   function navigate(direction: -1 | 1) {
     setAnchor((prev) =>
       viewMode === "week"
-        ? addDays(prev, 7 * direction)
-        : addMonths(prev, direction)
+        ? prev.add(7 * direction, "day")
+        : prev.add(direction, "month")
     );
   }
 
@@ -142,13 +135,13 @@ export function WeekPage({
         <NavArrowButton direction="left" onClick={() => navigate(-1)} />
         <span className="font-display text-base font-semibold">
           {viewMode === "week"
-            ? formatWeekRange(startOfWeek(anchor))
+            ? formatWeekRange(anchor.startOf("week"))
             : formatMonthYear(anchor)}
         </span>
         <Button
           type="button"
           variant="outline"
-          onClick={() => setAnchor(new Date())}
+          onClick={() => setAnchor(dayjs())}
         >
           Сегодня
         </Button>
@@ -172,15 +165,17 @@ export function WeekPage({
             {dates.map((date, i) => (
               <div key={date} className="w-12 text-center">
                 <div className="text-ink-muted text-[11px] font-bold tracking-wide uppercase">
-                  {WEEKDAY_LABELS[i]}
+                  {weekdayLabelsList[i]}
                 </div>
                 <div
                   className={
                     "mt-0.5 text-xs tabular-nums " +
-                    (date === todayISO ? "text-ink" : "text-ink-secondary")
+                    (dayjs(date).isSame(today, "day")
+                      ? "text-ink"
+                      : "text-ink-secondary")
                   }
                 >
-                  {Number(date.slice(8, 10))}
+                  {dayjs(date).date()}
                 </div>
               </div>
             ))}
@@ -212,8 +207,8 @@ export function WeekPage({
                   const cells: HabitRowCell[] = dates.map((date) => ({
                     date,
                     score: byDate?.get(date)?.score,
-                    isFuture: date > todayISO,
-                    isToday: date === todayISO,
+                    isFuture: dayjs(date).isAfter(today, "day"),
+                    isToday: dayjs(date).isSame(today, "day"),
                   }));
                   const streak = calculateStreak(data.entries, habit.id, today);
                   return (
@@ -279,11 +274,7 @@ export function WeekPage({
       {editing && editingHabit && (
         <EntryPopup
           habitName={editingHabit.name}
-          dateLabel={new Intl.DateTimeFormat("ru-RU", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-          }).format(new Date(`${editing.date}T00:00:00`))}
+          dateLabel={dayjs(editing.date).format("dddd, D MMMM")}
           quickAnswers={editingHabit.quickAnswers}
           initialScore={editingEntry?.score ?? 0}
           initialNote={editingEntry?.note ?? ""}

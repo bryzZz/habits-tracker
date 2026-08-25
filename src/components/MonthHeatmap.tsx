@@ -1,19 +1,21 @@
-import { monthGridWeeks, toISODate, WEEKDAY_LABELS } from "../lib/dates";
+import type { Dayjs } from "dayjs";
+
+import { monthGridWeeks, weekdayLabels } from "../lib/dates";
 import { colorForScore } from "../lib/scoreRamp";
 
 interface MonthHeatmapProps {
-  month: Date;
+  month: Dayjs;
   scoreByDate: Map<string, number>;
 }
 
 export function MonthHeatmap({ month, scoreByDate }: MonthHeatmapProps) {
   const weeks = monthGridWeeks(month);
-  const monthIndex = month.getMonth();
+  const labels = weekdayLabels();
 
   return (
     <div className="flex gap-3.5">
       <div className="flex flex-col gap-1 pt-0.5">
-        {WEEKDAY_LABELS.map((label) => (
+        {labels.map((label) => (
           <div
             key={label}
             className="text-ink-muted flex h-9 items-center text-[11px]"
@@ -24,10 +26,13 @@ export function MonthHeatmap({ month, scoreByDate }: MonthHeatmapProps) {
       </div>
       <div className="flex grow flex-col gap-1">
         {weeks.map((week) => (
-          <div key={toISODate(week[0])} className="grid grid-cols-7 gap-1">
+          <div
+            key={week[0].format("YYYY-MM-DD")}
+            className="grid grid-cols-7 gap-1"
+          >
             {week.map((d) => {
-              const iso = toISODate(d);
-              const inMonth = d.getMonth() === monthIndex;
+              const iso = d.format("YYYY-MM-DD");
+              const inMonth = d.isSame(month, "month");
               const score = inMonth ? scoreByDate.get(iso) : undefined;
               if (score === undefined) {
                 return (

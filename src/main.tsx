@@ -1,4 +1,5 @@
 import "./index.css";
+import "./lib/dayjsSetup";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

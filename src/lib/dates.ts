@@ -1,79 +1,39 @@
-export function toISODate(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+import dayjs, { type Dayjs } from "dayjs";
 
-export function parseISODate(s: string): Date {
-  return new Date(`${s}T00:00:00`);
-}
-
-export function addDays(d: Date, n: number): Date {
-  const copy = new Date(d);
-  copy.setDate(copy.getDate() + n);
-  return copy;
-}
-
-/** Monday-based week start. */
-export function startOfWeek(d: Date): Date {
-  const copy = new Date(d);
-  const day = copy.getDay(); // 0=Sun..6=Sat
-  const diff = (day === 0 ? -6 : 1) - day;
-  copy.setDate(copy.getDate() + diff);
-  copy.setHours(0, 0, 0, 0);
-  return copy;
-}
-
-export function startOfMonth(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), 1);
-}
-
-export function addMonths(d: Date, n: number): Date {
-  return new Date(d.getFullYear(), d.getMonth() + n, Math.min(d.getDate(), 28));
-}
-
-export function daysInMonth(d: Date): number {
-  return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-}
-
-export const WEEKDAY_LABELS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-
-export function formatWeekRange(weekStart: Date): string {
-  const weekEnd = addDays(weekStart, 6);
-  const monthFormatter = new Intl.DateTimeFormat("ru-RU", { month: "long" });
-  if (weekStart.getMonth() === weekEnd.getMonth()) {
-    return `${weekStart.getDate()} – ${weekEnd.getDate()} ${monthFormatter.format(weekEnd)} ${weekEnd.getFullYear()}`;
+export function formatWeekRange(weekStart: Dayjs): string {
+  const weekEnd = weekStart.add(6, "day");
+  if (weekStart.month() === weekEnd.month()) {
+    return `${weekStart.date()} – ${weekEnd.format("D MMMM YYYY")}`;
   }
-  return `${weekStart.getDate()} ${monthFormatter.format(weekStart)} – ${weekEnd.getDate()} ${monthFormatter.format(weekEnd)} ${weekEnd.getFullYear()}`;
+  return `${weekStart.format("D MMMM")} – ${weekEnd.format("D MMMM YYYY")}`;
 }
 
-export function formatMonthYear(d: Date): string {
-  const formatted = new Intl.DateTimeFormat("ru-RU", {
-    month: "long",
-    year: "numeric",
-  }).format(d);
+export function formatMonthYear(d: Dayjs): string {
+  const formatted = d.format("MMMM YYYY");
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
-export function isSameDate(a: Date, b: Date): boolean {
-  return toISODate(a) === toISODate(b);
+/** Short weekday labels in calendar order, following the active locale's week-start. */
+export function weekdayLabels(): string[] {
+  const start = dayjs().startOf("week");
+  return Array.from({ length: 7 }, (_, i) => {
+    const label = start.add(i, "day").format("dd");
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  });
 }
 
-/** Full calendar weeks (Monday-based) covering the given month, GitHub-style. */
-export function monthGridWeeks(d: Date): Date[][] {
-  const monthIndex = d.getMonth();
-  const gridStart = startOfWeek(startOfMonth(d));
-  const lastOfMonth = new Date(d.getFullYear(), monthIndex, daysInMonth(d));
-  const gridEnd = addDays(startOfWeek(lastOfMonth), 6);
+/** Full calendar weeks covering the given month, GitHub-style, following the active locale's week-start. */
+export function monthGridWeeks(d: Dayjs): Dayjs[][] {
+  const gridStart = d.startOf("month").startOf("week");
+  const gridEnd = d.endOf("month").startOf("week").add(6, "day");
 
-  const weeks: Date[][] = [];
+  const weeks: Dayjs[][] = [];
   let cursor = gridStart;
-  while (cursor <= gridEnd) {
-    const week: Date[] = [];
+  while (cursor.isSameOrBefore(gridEnd, "day")) {
+    const week: Dayjs[] = [];
     for (let i = 0; i < 7; i++) {
       week.push(cursor);
-      cursor = addDays(cursor, 1);
+      cursor = cursor.add(1, "day");
     }
     weeks.push(week);
   }

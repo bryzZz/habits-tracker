@@ -7,6 +7,7 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: "node",
+      setupFiles: ["./src/lib/dayjsSetup.ts"],
     },
   })
 );
