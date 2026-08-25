@@ -14,7 +14,6 @@ dist-ssr
 
 # personal habit-tracking data — never committed (ADR-0003)
 /data/
-/data.xlsx
 /scripts/
 
 # Editor directories and files
