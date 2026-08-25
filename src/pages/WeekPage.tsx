@@ -12,8 +12,10 @@ import { EntryPopup } from "../components/EntryPopup";
 import { GroupHeader } from "../components/GroupHeader";
 import { HabitRow } from "../components/HabitRow";
 import type { HabitRowCell } from "../components/HabitRow";
+import { NavArrowButton } from "../components/NavArrowButton";
 import type { DayEntry, HabitsData } from "../data/types";
 import { LOCAL_USER_ID, PRIORITY_ORDER } from "../data/types";
+import { useHabitsView } from "../data/useHabitsView";
 import { PRIORITY_TINT } from "../lib/priorityStyles";
 import {
   addDays,
@@ -26,7 +28,6 @@ import {
   toISODate,
   WEEKDAY_LABELS,
 } from "../lib/dates";
-import { buildEntriesByHabit, overallScoreForDate } from "../lib/habitsData";
 import { calculateStreak } from "../lib/streak";
 
 type ViewMode = "week" | "month";
@@ -51,8 +52,8 @@ export function WeekPage({
   const [anchor, setAnchor] = useState(() => new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [editing, setEditing] = useState<Editing | null>(null);
-  const [today] = useState(() => new Date());
-  const todayISO = toISODate(today);
+  const { today, todayISO, entriesByHabit, getOverallScoreForDate } =
+    useHabitsView(data);
 
   const dates = useMemo(() => {
     if (viewMode === "week") {
@@ -66,11 +67,6 @@ export function WeekPage({
     );
   }, [anchor, viewMode]);
 
-  const entriesByHabit = useMemo(
-    () => buildEntriesByHabit(data.entries),
-    [data.entries]
-  );
-
   const hiddenHabits = useMemo(
     () => data.habits.filter((h) => !h.visible),
     [data.habits]
@@ -78,11 +74,11 @@ export function WeekPage({
 
   const overallScore = useMemo(() => {
     const daily = dates
-      .map((date) => overallScoreForDate(data, entriesByHabit, date, todayISO))
+      .map((date) => getOverallScoreForDate(date))
       .filter((s): s is number => s !== undefined);
     if (daily.length === 0) return null;
     return daily.reduce((a, b) => a + b, 0) / daily.length;
-  }, [data, entriesByHabit, dates, todayISO]);
+  }, [dates, getOverallScoreForDate]);
 
   function navigate(direction: -1 | 1) {
     setAnchor((prev) =>
@@ -142,23 +138,7 @@ export function WeekPage({
       </div>
 
       <div className="mb-6 flex items-center gap-3.5">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={() => navigate(-1)}
-        >
-          <svg viewBox="0 0 24 24" className="h-4 w-4">
-            <path
-              d="M15 6l-6 6 6 6"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </svg>
-        </Button>
+        <NavArrowButton direction="left" onClick={() => navigate(-1)} />
         <span className="font-display text-base font-semibold">
           {viewMode === "week"
             ? formatWeekRange(startOfWeek(anchor))
@@ -171,23 +151,7 @@ export function WeekPage({
         >
           Сегодня
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={() => navigate(1)}
-        >
-          <svg viewBox="0 0 24 24" className="h-4 w-4">
-            <path
-              d="M9 6l6 6-6 6"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </svg>
-        </Button>
+        <NavArrowButton direction="right" onClick={() => navigate(1)} />
         <ToggleGroup
           type="single"
           variant="outline"

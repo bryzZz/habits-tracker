@@ -4,6 +4,7 @@ import { MonthHeatmap } from "../components/MonthHeatmap";
 import { StatTile } from "../components/StatTile";
 import { TrendLine } from "../components/TrendLine";
 import type { HabitsData } from "../data/types";
+import { useHabitsView } from "../data/useHabitsView";
 import {
   addDays,
   formatMonthYear,
@@ -11,7 +12,6 @@ import {
   startOfWeek,
   toISODate,
 } from "../lib/dates";
-import { buildEntriesByHabit, overallScoreForDate } from "../lib/habitsData";
 import { pluralizeDays } from "../lib/pluralize";
 import { colorForScore } from "../lib/scoreRamp";
 import { calculateBestStreak, calculateStreak } from "../lib/streak";
@@ -29,13 +29,8 @@ export function StatsPage({ data }: StatsPageProps) {
   const [selectedHabitId, setSelectedHabitId] = useState(
     () => data.habits[0]?.id ?? ""
   );
-  const [today] = useState(() => new Date());
-  const todayISO = toISODate(today);
-
-  const entriesByHabit = useMemo(
-    () => buildEntriesByHabit(data.entries),
-    [data.entries]
-  );
+  const { today, todayISO, entriesByHabit, getOverallScoreForDate } =
+    useHabitsView(data);
 
   const monthWeeks = useMemo(() => monthGridWeeks(today), [today]);
 
@@ -45,12 +40,12 @@ export function StatsPage({ data }: StatsPageProps) {
       for (const d of week) {
         if (d.getMonth() !== today.getMonth()) continue;
         const iso = toISODate(d);
-        const score = overallScoreForDate(data, entriesByHabit, iso, todayISO);
+        const score = getOverallScoreForDate(iso);
         if (score !== undefined) map.set(iso, score);
       }
     }
     return map;
-  }, [monthWeeks, data, entriesByHabit, todayISO, today]);
+  }, [monthWeeks, today, getOverallScoreForDate]);
 
   const selectedHabit = data.habits.find((h) => h.id === selectedHabitId);
 
