@@ -1,5 +1,11 @@
 import { Eye } from "lucide-react";
 import { useMemo, useState } from "react";
+
+import { EntryPopup } from "../components/EntryPopup";
+import { GroupHeader } from "../components/GroupHeader";
+import type { HabitRowCell } from "../components/HabitRow";
+import { HabitRow } from "../components/HabitRow";
+import { NavArrowButton } from "../components/NavArrowButton";
 import {
   Accordion,
   AccordionContent,
@@ -8,15 +14,9 @@ import {
 } from "../components/ui/accordion";
 import { Button } from "../components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
-import { EntryPopup } from "../components/EntryPopup";
-import { GroupHeader } from "../components/GroupHeader";
-import { HabitRow } from "../components/HabitRow";
-import type { HabitRowCell } from "../components/HabitRow";
-import { NavArrowButton } from "../components/NavArrowButton";
 import type { DayEntry, HabitsData } from "../data/types";
 import { LOCAL_USER_ID, PRIORITY_ORDER } from "../data/types";
 import { useHabitsView } from "../data/useHabitsView";
-import { PRIORITY_TINT } from "../lib/priorityStyles";
 import {
   addDays,
   addMonths,
@@ -28,6 +28,7 @@ import {
   toISODate,
   WEEKDAY_LABELS,
 } from "../lib/dates";
+import { PRIORITY_TINT } from "../lib/priorityStyles";
 import { calculateStreak } from "../lib/streak";
 
 type ViewMode = "week" | "month";

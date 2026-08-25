@@ -11,3 +11,7 @@ Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `
 ### Domain docs
 
 Single-context layout (root `CONTEXT.md` + `docs/adr/`). See `docs/agents/domain.md`.
+
+## Package manager
+
+pnpm only — never npm or yarn (`pnpm install`, `pnpm run <script>`, `pnpm dlx`).

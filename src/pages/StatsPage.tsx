@@ -1,9 +1,10 @@
+import { Flame } from "lucide-react";
 import { useMemo, useState } from "react";
-import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
+
 import { MonthHeatmap } from "../components/MonthHeatmap";
 import { StatTile } from "../components/StatTile";
-import { Flame } from "lucide-react";
 import { TrendLine } from "../components/TrendLine";
+import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
 import type { HabitsData } from "../data/types";
 import { useHabitsView } from "../data/useHabitsView";
 import {

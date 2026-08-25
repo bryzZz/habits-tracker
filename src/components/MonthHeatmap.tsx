@@ -1,5 +1,5 @@
-import { colorForScore } from "../lib/scoreRamp";
 import { monthGridWeeks, toISODate, WEEKDAY_LABELS } from "../lib/dates";
+import { colorForScore } from "../lib/scoreRamp";
 
 interface MonthHeatmapProps {
   month: Date;

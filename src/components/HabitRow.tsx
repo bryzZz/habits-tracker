@@ -1,7 +1,8 @@
 import { EyeOff } from "lucide-react";
+
+import type { Habit } from "../data/types";
 import { DayCell } from "./DayCell";
 import { StreakBadge } from "./StreakBadge";
-import type { Habit } from "../data/types";
 
 export interface HabitRowCell {
   date: string;

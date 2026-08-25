@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+
 import { colorForScore } from "../lib/scoreRamp";
 
 interface DayCellProps {

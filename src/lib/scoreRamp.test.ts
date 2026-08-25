@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { colorForScore, SCORE_RAMP } from "./scoreRamp";
 
 describe("colorForScore", () => {

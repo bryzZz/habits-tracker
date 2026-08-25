@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router";
+
 import { jsonFileDataStore } from "./data/jsonFileDataStore";
 import { useHabitsData } from "./data/useHabitsData";
 import { StatsPage } from "./pages/StatsPage";

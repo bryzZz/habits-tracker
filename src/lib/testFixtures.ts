@@ -1,5 +1,5 @@
-import { LOCAL_USER_ID } from "../data/types";
 import type { DayEntry, Habit } from "../data/types";
+import { LOCAL_USER_ID } from "../data/types";
 
 export function habit(id: string, visible: boolean): Habit {
   return {

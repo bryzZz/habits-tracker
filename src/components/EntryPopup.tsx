@@ -1,10 +1,11 @@
 import { useState } from "react";
+
+import type { QuickAnswer } from "../data/types";
+import { colorForScore, scoreToStep, stepToScore } from "../lib/scoreRamp";
 import { Button } from "./ui/button";
 import { Popover, PopoverAnchor, PopoverContent } from "./ui/popover";
 import { Slider } from "./ui/slider";
 import { Textarea } from "./ui/textarea";
-import { colorForScore, scoreToStep, stepToScore } from "../lib/scoreRamp";
-import type { QuickAnswer } from "../data/types";
 
 interface EntryPopupProps {
   habitName: string;

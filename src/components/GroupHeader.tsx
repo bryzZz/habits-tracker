@@ -1,6 +1,6 @@
-import { PRIORITY_COLOR } from "../lib/priorityStyles";
 import type { PriorityId } from "../data/types";
 import { PRIORITY_LABELS } from "../data/types";
+import { PRIORITY_COLOR } from "../lib/priorityStyles";
 
 interface GroupHeaderProps {
   priority: PriorityId;

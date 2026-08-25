@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import type { HabitsData } from "../data/types";
 import {
   buildEntriesByHabit,
