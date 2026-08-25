@@ -1,3 +1,4 @@
+import { Eye } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   Accordion,
@@ -33,6 +34,7 @@ type ViewMode = "week" | "month";
 interface WeekPageProps {
   data: HabitsData;
   onSaveEntry: (entry: DayEntry) => void;
+  onToggleVisibility: (habitId: string, visible: boolean) => void;
 }
 
 interface Editing {
@@ -41,7 +43,11 @@ interface Editing {
   anchorRect: DOMRect;
 }
 
-export function WeekPage({ data, onSaveEntry }: WeekPageProps) {
+export function WeekPage({
+  data,
+  onSaveEntry,
+  onToggleVisibility,
+}: WeekPageProps) {
   const [anchor, setAnchor] = useState(() => new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [editing, setEditing] = useState<Editing | null>(null);
@@ -63,6 +69,11 @@ export function WeekPage({ data, onSaveEntry }: WeekPageProps) {
   const entriesByHabit = useMemo(
     () => buildEntriesByHabit(data.entries),
     [data.entries]
+  );
+
+  const hiddenHabits = useMemo(
+    () => data.habits.filter((h) => !h.visible),
+    [data.habits]
   );
 
   const overallScore = useMemo(() => {
@@ -244,6 +255,7 @@ export function WeekPage({ data, onSaveEntry }: WeekPageProps) {
                       onCellClick={(date, target) =>
                         openEditor(habit.id, date, target)
                       }
+                      onHide={(habitId) => onToggleVisibility(habitId, false)}
                     />
                   );
                 })}
@@ -252,6 +264,46 @@ export function WeekPage({ data, onSaveEntry }: WeekPageProps) {
           );
         })}
       </Accordion>
+
+      {hiddenHabits.length > 0 && (
+        <Accordion type="single" collapsible className="mb-7">
+          <AccordionItem value="hidden" className="border-b-0">
+            <AccordionTrigger className="items-center rounded-[9px] px-3.5 py-2 hover:no-underline">
+              <span className="flex items-center gap-2.5">
+                <span className="font-display text-ink-muted text-sm font-semibold">
+                  Скрытые привычки
+                </span>
+                <span className="text-ink-muted text-xs">
+                  {hiddenHabits.length}
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="pb-0">
+              <div className="flex flex-col gap-1">
+                {hiddenHabits.map((habit) => (
+                  <div
+                    key={habit.id}
+                    className="flex items-center justify-between rounded-lg px-1 py-1.5"
+                  >
+                    <span className="text-ink-secondary text-sm font-medium">
+                      {habit.name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onToggleVisibility(habit.id, true)}
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      Показать
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
 
       {editing && editingHabit && (
         <EntryPopup

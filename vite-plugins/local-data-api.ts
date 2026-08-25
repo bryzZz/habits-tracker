@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
@@ -58,7 +59,7 @@ export function localDataApi(): Plugin {
                 res.end(JSON.stringify({ error: "invalid HabitsData shape" }));
                 return;
               }
-              const tmpPath = `${DATA_PATH}.tmp`;
+              const tmpPath = `${DATA_PATH}.${randomUUID()}.tmp`;
               await fs.writeFile(
                 tmpPath,
                 JSON.stringify(parsed, null, 2),

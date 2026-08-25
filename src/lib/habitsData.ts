@@ -1,13 +1,5 @@
 import type { DayEntry, HabitsData } from "../data/types";
 
-export function entryFor(
-  data: HabitsData,
-  habitId: string,
-  date: string
-): DayEntry | undefined {
-  return data.entries.find((e) => e.habitId === habitId && e.date === date);
-}
-
 export function upsertEntry(data: HabitsData, entry: DayEntry): HabitsData {
   const idx = data.entries.findIndex(
     (e) => e.habitId === entry.habitId && e.date === entry.date

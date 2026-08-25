@@ -1,7 +1,34 @@
 import { describe, expect, it } from "vitest";
 import type { HabitsData } from "../data/types";
-import { buildEntriesByHabit, overallScoreForDate } from "./habitsData";
+import {
+  buildEntriesByHabit,
+  overallScoreForDate,
+  setHabitVisibility,
+} from "./habitsData";
 import { entry, habit } from "./testFixtures";
+
+describe("setHabitVisibility", () => {
+  it("flips visibility for the matching habit only", () => {
+    const data: HabitsData = {
+      habits: [habit("h1", true), habit("h2", true)],
+      entries: [],
+    };
+    const next = setHabitVisibility(data, "h1", false);
+    expect(next.habits.find((h) => h.id === "h1")?.visible).toBe(false);
+    expect(next.habits.find((h) => h.id === "h2")?.visible).toBe(true);
+  });
+
+  it("leaves entry history untouched when hiding or re-showing", () => {
+    const data: HabitsData = {
+      habits: [habit("h1", true)],
+      entries: [entry("h1", "2026-08-20", 0.7)],
+    };
+    const hidden = setHabitVisibility(data, "h1", false);
+    expect(hidden.entries).toEqual(data.entries);
+    const shown = setHabitVisibility(hidden, "h1", true);
+    expect(shown.entries).toEqual(data.entries);
+  });
+});
 
 describe("overallScoreForDate", () => {
   it("returns undefined for a future date", () => {

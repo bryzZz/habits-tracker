@@ -6,7 +6,8 @@ import { WeekPage } from "./pages/WeekPage";
 import { Layout } from "./routes/Layout";
 
 function App() {
-  const { data, error, saveEntry } = useHabitsData(jsonFileDataStore);
+  const { data, error, saveEntry, toggleHabitVisibility } =
+    useHabitsData(jsonFileDataStore);
 
   if (error) {
     return (
@@ -29,7 +30,13 @@ function App() {
       <Route element={<Layout />}>
         <Route
           index
-          element={<WeekPage data={data} onSaveEntry={saveEntry} />}
+          element={
+            <WeekPage
+              data={data}
+              onSaveEntry={saveEntry}
+              onToggleVisibility={toggleHabitVisibility}
+            />
+          }
         />
         <Route path="stats" element={<StatsPage data={data} />} />
       </Route>
