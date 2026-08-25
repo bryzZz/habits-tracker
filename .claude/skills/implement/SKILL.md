@@ -12,4 +12,8 @@ Run typechecking regularly, single test files regularly, and the full test suite
 
 Once done, use /code-review to review the work.
 
-Commit your work to the current branch.
+Check off the acceptance criteria this ticket satisfies and set `Status: done` in the ticket file.
+
+Stop here and wait for explicit approval before committing. If the user asks for changes, apply them and use /code-review to review the work again.
+
+Once approved, commit the work — including the updated ticket file — to the current branch.
