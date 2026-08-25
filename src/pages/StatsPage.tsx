@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
 import { MonthHeatmap } from "../components/MonthHeatmap";
 import { StatTile } from "../components/StatTile";
+import { Flame } from "lucide-react";
 import { TrendLine } from "../components/TrendLine";
 import type { HabitsData } from "../data/types";
 import { useHabitsView } from "../data/useHabitsView";
@@ -146,12 +147,10 @@ export function StatsPage({ data }: StatsPageProps) {
                 label="Текущий стрик"
                 value={String(currentStreak)}
                 icon={
-                  <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#f29a20]">
-                    <path
-                      d="M12 2c-1 3.5-4.5 6-4.5 10a4.5 4.5 0 1 0 9 0c0-1.5-.5-2.5-1-3.5.3 1 .2 2-.5 2.5-.2-2-1.5-3.5-3-9z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <Flame
+                    className="size-7 text-[#f29a20]"
+                    fill="currentColor"
+                  />
                 }
               />
             </div>
