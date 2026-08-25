@@ -1,9 +1,17 @@
+import { LOCAL_USER_ID } from "../data/types";
 import type { DayEntry, Habit } from "../data/types";
 
 export function habit(id: string, visible: boolean): Habit {
-  return { id, name: id, priority: "priority", visible, quickAnswers: [] };
+  return {
+    id,
+    userId: LOCAL_USER_ID,
+    name: id,
+    priority: "priority",
+    visible,
+    quickAnswers: [],
+  };
 }
 
 export function entry(habitId: string, date: string, score: number): DayEntry {
-  return { habitId, date, note: "", score };
+  return { habitId, userId: LOCAL_USER_ID, date, note: "", score };
 }

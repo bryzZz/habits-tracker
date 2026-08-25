@@ -13,7 +13,7 @@ import { GroupHeader } from "../components/GroupHeader";
 import { HabitRow } from "../components/HabitRow";
 import type { HabitRowCell } from "../components/HabitRow";
 import type { DayEntry, HabitsData } from "../data/types";
-import { PRIORITY_ORDER } from "../data/types";
+import { LOCAL_USER_ID, PRIORITY_ORDER } from "../data/types";
 import { PRIORITY_TINT } from "../lib/priorityStyles";
 import {
   addDays,
@@ -98,7 +98,13 @@ export function WeekPage({
 
   function handleSave(score: number, note: string) {
     if (!editing) return;
-    onSaveEntry({ habitId: editing.habitId, date: editing.date, score, note });
+    onSaveEntry({
+      habitId: editing.habitId,
+      userId: LOCAL_USER_ID,
+      date: editing.date,
+      score,
+      note,
+    });
     setEditing(null);
   }
 
