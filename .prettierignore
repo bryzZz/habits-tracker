@@ -1,0 +1,8 @@
+node_modules
+dist
+pnpm-lock.yaml
+
+# not app source — agent/skill framework content, not ours to reformat
+.claude
+docs/agents
+skills-lock.json

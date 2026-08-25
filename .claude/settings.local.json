@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm view *)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm run *)",
+      "Bash(node -e ' *)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(pnpm exec *)",
+      "Bash(set -e)",
+      "Bash(curl -s http://localhost:5199/ -o /tmp/idx.html -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:5199/src/index.css)",
+      "Bash(wait)"
+    ]
+  }
+}
