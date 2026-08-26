@@ -39,6 +39,7 @@ function App() {
             />
           }
         />
+
         <Route path="stats" element={<StatsPage data={data} />} />
       </Route>
     </Routes>

@@ -8,24 +8,6 @@ export function useHabitsData(store: DataStore) {
   const [data, setData] = useState<HabitsData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const dataRef = useRef<HabitsData | null>(null);
-  useEffect(() => {
-    dataRef.current = data;
-  }, [data]);
-
-  useEffect(() => {
-    let cancelled = false;
-    store
-      .load()
-      .then((loaded) => {
-        if (!cancelled) setData(loaded);
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) setError(String(err));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [store]);
 
   // Persists outside setData's updater — React StrictMode double-invokes
   // functional setState updaters in dev, which would otherwise fire two
@@ -55,6 +37,27 @@ export function useHabitsData(store: DataStore) {
     },
     [persist]
   );
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    store
+      .load()
+      .then((loaded) => {
+        if (!cancelled) setData(loaded);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(String(err));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [store]);
 
   return { data, error, saveEntry, toggleHabitVisibility };
 }

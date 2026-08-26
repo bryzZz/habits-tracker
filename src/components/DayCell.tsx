@@ -1,5 +1,7 @@
 import type { MouseEvent } from "react";
+import { twMerge } from "tailwind-merge";
 
+import { CELL_PX } from "../lib/dayGrid";
 import { colorForScore } from "../lib/scoreRamp";
 
 interface DayCellProps {
@@ -17,17 +19,20 @@ export function DayCell({
   size,
   onClick,
 }: DayCellProps) {
-  const dims =
-    size === "week"
-      ? "h-11 w-12 rounded-[10px]"
-      : "h-[38px] w-[23px] rounded-[6px]";
+  const baseClasses = twMerge(
+    "shrink-0 border h-[38px]",
+    size === "week" && "rounded-[8px]",
+    size === "month" && "rounded-[6px]"
+  );
 
   if (isFuture) {
     return (
       <button
         type="button"
+        data-entry-trigger
         onClick={onClick}
-        className={`border-border-strong shrink-0 border-[1.5px] border-dashed ${dims}`}
+        className={twMerge(baseClasses, "border-border-strong border-dashed")}
+        style={{ width: CELL_PX[size] }}
       />
     );
   }
@@ -35,11 +40,14 @@ export function DayCell({
   return (
     <button
       type="button"
+      data-entry-trigger
       onClick={onClick}
-      className={`shrink-0 ${isToday ? "border-2 border-white" : "border border-black/20"} ${dims}`}
+      className={twMerge(baseClasses, !isToday && "border-black/20")}
       style={{
-        backgroundColor: colorForScore(score ?? 0),
-        boxShadow: isToday ? "0 0 0 2px var(--color-page)" : undefined,
+        width: CELL_PX[size],
+        backgroundColor: isToday
+          ? "var(--color-surface)"
+          : colorForScore(score ?? 0),
       }}
     />
   );

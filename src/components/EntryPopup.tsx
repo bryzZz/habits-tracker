@@ -7,24 +7,30 @@ import { Popover, PopoverAnchor, PopoverContent } from "./ui/popover";
 import { Slider } from "./ui/slider";
 import { Textarea } from "./ui/textarea";
 
+type AnchorRect = Pick<DOMRect, "top" | "left" | "width" | "height">;
+
 interface EntryPopupProps {
-  habitName: string;
-  dateLabel: string;
-  quickAnswers: QuickAnswer[];
-  initialScore: number;
-  initialNote: string;
-  anchorRect: DOMRect;
+  open: boolean;
+  habitName?: string;
+  dateLabel?: string;
+  quickAnswers?: QuickAnswer[];
+  initialScore?: number;
+  initialNote?: string;
+  anchorRect?: AnchorRect;
   onSave: (score: number, note: string) => void;
   onClose: () => void;
 }
 
+const EMPTY_ANCHOR_RECT = { top: 0, left: 0, width: 0, height: 0 };
+
 export function EntryPopup({
+  open,
   habitName,
   dateLabel,
-  quickAnswers,
-  initialScore,
-  initialNote,
-  anchorRect,
+  quickAnswers = [],
+  initialScore = 0,
+  initialNote = "",
+  anchorRect = EMPTY_ANCHOR_RECT,
   onSave,
   onClose,
 }: EntryPopupProps) {
@@ -34,7 +40,7 @@ export function EntryPopup({
   const color = colorForScore(score);
 
   return (
-    <Popover open onOpenChange={(open) => !open && onClose()}>
+    <Popover open={open} onOpenChange={(open) => !open && onClose()}>
       <PopoverAnchor asChild>
         <div
           style={{
@@ -47,7 +53,20 @@ export function EntryPopup({
           }}
         />
       </PopoverAnchor>
-      <PopoverContent align="start" sideOffset={8} className="w-80 p-4.5">
+      <PopoverContent
+        align="start"
+        sideOffset={8}
+        className="w-80 p-4.5"
+        onPointerDownOutside={(event) => {
+          // Clicking another day cell re-anchors this same popup (its own
+          // onClick calls back into openEditor) instead of dismissing it —
+          // don't let Radix close it first, or it flickers shut before
+          // reopening at the new cell.
+          if ((event.target as Element).closest("[data-entry-trigger]")) {
+            event.preventDefault();
+          }
+        }}
+      >
         <div className="flex items-center justify-between">
           <div>
             <div className="font-display text-[15px] font-semibold">
