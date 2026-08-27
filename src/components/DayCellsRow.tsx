@@ -17,7 +17,7 @@ export const DayCellsRow: FC<DayCellsRowProps> = ({
 }) => {
   return (
     <div
-      className={cn("grid gap-1", className)}
+      className={cn("grid gap-0.5 md:gap-1", className)}
       style={{ gridTemplateColumns: `repeat(${dates.length}, minmax(0, 1fr))` }}
     >
       {dates.map((date) => renderDate(date))}

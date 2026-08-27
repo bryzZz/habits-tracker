@@ -15,7 +15,7 @@ interface HabitNameCellProps {
 export const HabitNameCell: FC<HabitNameCellProps> = memo(
   ({ habit, streak, onHide }) => {
     return (
-      <div className="group flex h-11.5 items-center gap-2.5">
+      <div className="group flex items-center gap-2.5 md:h-11.5">
         <span
           className="size-2.5 shrink-0 rounded-full"
           style={{ backgroundColor: PRIORITY_COLOR[habit.priority] }}

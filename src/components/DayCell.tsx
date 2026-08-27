@@ -21,7 +21,7 @@ export const DayCell: FC<DayCellProps> = ({
   const baseClasses = cn(
     "h-9.5 w-full border",
     size === "week" && "rounded-md",
-    size === "month" && "rounded-sm"
+    size === "month" && "rounded-xs md:rounded-sm"
   );
 
   if (isFuture) {

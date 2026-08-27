@@ -13,7 +13,7 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
 export const Layout: FC = () => {
   return (
     <div className="min-h-screen pb-16 md:pb-0">
-      <nav className="fixed inset-x-0 bottom-0 flex justify-center gap-1 border-t border-border bg-background py-3 md:relative md:inset-auto md:border-t-0 md:border-b">
+      <nav className="fixed inset-x-0 bottom-0 z-10 flex justify-center gap-1 border-t border-border bg-background py-3 md:relative md:inset-auto md:border-t-0 md:border-b">
         <NavLink to="/" end className={navLinkClassName}>
           Неделя
         </NavLink>

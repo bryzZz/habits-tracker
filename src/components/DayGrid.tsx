@@ -127,12 +127,12 @@ export const DayGrid: FC<DayGridProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4" {...swipeHandlers}>
+        <div className="flex flex-col" {...swipeHandlers}>
           <div key={pageKey} className={pageTransitionClass}>
             <DayGridHeader layout={layout} />
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {visibleHabits.map((habit) => (
               <div key={habit.id} className="flex flex-col gap-1.5">
                 {nameCell(habit)}
