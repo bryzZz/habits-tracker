@@ -45,7 +45,10 @@ export const DayCell: FC<DayCellProps> = ({
       className={cn(baseClasses, !isToday && "border-black/20")}
       style={{
         width: CELL_PX[size],
-        backgroundColor: isToday ? "var(--muted)" : colorForScore(score ?? 0),
+        backgroundColor:
+          isToday && score === undefined
+            ? "var(--muted)"
+            : colorForScore(score ?? 0),
       }}
     />
   );
