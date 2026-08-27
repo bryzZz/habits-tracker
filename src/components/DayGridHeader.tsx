@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { type FC, memo } from "react";
 
 import type { DayGridLayout } from "../hooks/useDayGrid";
-import { DayGridBlockRow } from "./DayGridBlockRow";
+import { DayCellsRow } from "./DayCellsRow";
 import { DayLabel } from "./DayLabel";
 
 interface DayGridHeaderProps {
@@ -10,18 +10,17 @@ interface DayGridHeaderProps {
 }
 
 export const DayGridHeader: FC<DayGridHeaderProps> = memo(({ layout }) => {
-  const { today, size } = layout;
+  const { today, dates } = layout;
 
   return (
-    <DayGridBlockRow
-      layout={layout}
-      className="relative mb-4.5 h-12 border-b border-border"
+    <DayCellsRow
+      dates={dates}
+      className="mb-4.5 h-12 items-center border-b border-border"
       renderDate={(date) => (
         <DayLabel
           key={date}
           date={date}
           isToday={dayjs(date).isSame(today, "day")}
-          size={size}
         />
       )}
     />

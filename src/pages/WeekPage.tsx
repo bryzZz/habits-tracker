@@ -38,7 +38,7 @@ export const WeekPage: FC<WeekPageProps> = ({
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-12 py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 md:px-12">
       <DayGrid
         today={today}
         entries={data.entries}

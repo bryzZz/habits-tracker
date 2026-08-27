@@ -4,7 +4,7 @@ import { type FC, memo } from "react";
 import type { DayEntry } from "../data/types";
 import type { DayGridLayout } from "../hooks/useDayGrid";
 import { DayCell } from "./DayCell";
-import { DayGridBlockRow } from "./DayGridBlockRow";
+import { DayCellsRow } from "./DayCellsRow";
 
 interface HabitDayCellsProps {
   habitId: string;
@@ -15,13 +15,12 @@ interface HabitDayCellsProps {
 
 export const HabitDayCells: FC<HabitDayCellsProps> = memo(
   ({ habitId, layout, entriesByDate, onCellClick }) => {
-    const { today, size } = layout;
+    const { today, size, dates } = layout;
 
     return (
-      <DayGridBlockRow
-        layout={layout}
-        className="relative h-11.5"
-        blockClassName="h-full"
+      <DayCellsRow
+        dates={dates}
+        className="h-11.5"
         renderDate={(date) => (
           <DayCell
             key={date}

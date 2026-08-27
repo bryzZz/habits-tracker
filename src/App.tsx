@@ -13,7 +13,7 @@ export const App: FC = () => {
 
   if (error) {
     return (
-      <div className="mx-auto mt-6 max-w-6xl px-12 text-sm text-destructive">
+      <div className="mx-auto mt-6 max-w-6xl px-4 text-sm text-destructive md:px-12">
         Не удалось загрузить данные: {error}
       </div>
     );

@@ -77,7 +77,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
       : null;
 
   return (
-    <div className="mx-auto max-w-6xl px-12 py-8">
+    <div className="mx-auto max-w-6xl px-4 py-8 md:px-12">
       <div className="mb-7 flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">Статистика</h1>
 
@@ -94,7 +94,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
       </div>
 
       <div className="mb-7 rounded-xl border border-border bg-card p-6">
-        <div className="mb-4.5 flex items-baseline justify-between">
+        <div className="mb-4.5 flex flex-wrap items-baseline justify-between gap-2">
           <div className="font-display text-base font-semibold">
             Общая картина — {formatMonthYear(today)}
           </div>
@@ -134,7 +134,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
       </ToggleGroup>
 
       {selectedHabit && (
-        <div className="flex items-stretch gap-5">
+        <div className="flex flex-col items-stretch gap-5 md:flex-row">
           <div className="grow rounded-xl border border-border bg-card p-6">
             <div className="mb-4.5 font-display text-base font-semibold">
               {selectedHabit.name} — тренд оценки
@@ -143,7 +143,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
             <TrendLine points={trendPoints} />
           </div>
 
-          <div className="flex w-65 shrink-0 flex-col gap-3">
+          <div className="flex flex-col gap-3 md:w-65 md:shrink-0">
             <div className="rounded-xl border border-border bg-card p-6">
               <StatTile
                 label="Текущий стрик"

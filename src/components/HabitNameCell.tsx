@@ -30,7 +30,7 @@ export const HabitNameCell: FC<HabitNameCellProps> = memo(
           type="button"
           onClick={() => onHide(habit.id)}
           aria-label={`Скрыть привычку «${habit.name}»`}
-          className="ml-auto text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground"
+          className="ml-auto text-muted-foreground transition-opacity hover:text-foreground md:opacity-0 md:group-hover:opacity-100"
         >
           <EyeOff className="size-3.5" />
         </button>

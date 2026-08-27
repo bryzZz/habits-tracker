@@ -57,7 +57,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
       <PopoverContent
         align="start"
         sideOffset={8}
-        className="w-80 p-4.5"
+        className="max-h-(--radix-popover-content-available-height) w-80 overflow-y-auto p-4.5"
         onPointerDownOutside={(event) => {
           // Another day cell's onClick re-anchors this popup — don't let Radix's
           // outside-click handler close it first, or it flickers shut before reopening.

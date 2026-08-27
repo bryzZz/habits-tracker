@@ -1,26 +1,23 @@
 import dayjs from "dayjs";
 import type { FC } from "react";
 
-import { CELL_PX, type GridViewMode } from "../lib/dayGrid";
 import { cn } from "../lib/utils";
 
 interface DayLabelProps {
   date: string;
   isToday: boolean;
-  size: GridViewMode;
 }
 
-export const DayLabel: FC<DayLabelProps> = ({ date, isToday, size }) => {
+export const DayLabel: FC<DayLabelProps> = ({ date, isToday }) => {
   const d = dayjs(date);
   const weekday = d.format("dd");
 
   return (
     <div
       className={cn(
-        "shrink-0 rounded-lg border-2 border-transparent py-0.5 text-center",
+        "overflow-hidden rounded-lg border-2 border-transparent py-0.5 text-center",
         isToday && "border-priority text-foreground"
       )}
-      style={{ width: CELL_PX[size] }}
     >
       <div
         className={cn(

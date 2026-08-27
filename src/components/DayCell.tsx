@@ -1,6 +1,5 @@
 import type { FC, MouseEvent } from "react";
 
-import { CELL_PX } from "../lib/dayGrid";
 import { colorForScore } from "../lib/scoreRamp";
 import { cn } from "../lib/utils";
 
@@ -20,7 +19,7 @@ export const DayCell: FC<DayCellProps> = ({
   onClick,
 }) => {
   const baseClasses = cn(
-    "shrink-0 border h-9.5",
+    "h-9.5 w-full border",
     size === "week" && "rounded-md",
     size === "month" && "rounded-sm"
   );
@@ -32,7 +31,6 @@ export const DayCell: FC<DayCellProps> = ({
         data-entry-trigger
         onClick={onClick}
         className={cn(baseClasses, "border-dashed border-input")}
-        style={{ width: CELL_PX[size] }}
       />
     );
   }
@@ -44,7 +42,6 @@ export const DayCell: FC<DayCellProps> = ({
       onClick={onClick}
       className={cn(baseClasses, !isToday && "border-black/20")}
       style={{
-        width: CELL_PX[size],
         backgroundColor:
           isToday && score === undefined
             ? "var(--muted)"

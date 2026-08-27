@@ -1,7 +1,7 @@
 import dayjs, { type Dayjs } from "dayjs";
 
-export const formatWeekRange = (weekStart: Dayjs): string => {
-  const weekEnd = weekStart.add(6, "day");
+export const formatWeekRange = (weekStart: Dayjs, dayCount: number): string => {
+  const weekEnd = weekStart.add(dayCount - 1, "day");
   if (weekStart.month() === weekEnd.month()) {
     return `${weekStart.date()} – ${weekEnd.format("D MMMM YYYY")}`;
   }

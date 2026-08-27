@@ -4,9 +4,10 @@ import { useMemo } from "react";
 
 import type { DayEntry, Habit } from "../data/types";
 import { useDayGrid } from "../hooks/useDayGrid";
+import { useSwipeNavigate } from "../hooks/useSwipeNavigate";
 import { formatMonthYear, formatWeekRange } from "../lib/dates";
-import { datesInBlock } from "../lib/dayGrid";
 import { calculateStreak } from "../lib/streak";
+import { cn } from "../lib/utils";
 import { DayGridHeader } from "./DayGridHeader";
 import { DayGridToolbar } from "./DayGridToolbar";
 import { HabitDayCells } from "./HabitDayCells";
@@ -22,8 +23,6 @@ interface DayGridProps {
   onHide: (habitId: string) => void;
 }
 
-/** Isolates useDayGrid's ~120 scroll-driven re-renders/sec here, away from
- * WeekPage (which also renders the entry popup and hidden-habits accordion). */
 export const DayGrid: FC<DayGridProps> = ({
   today,
   entries,
@@ -36,74 +35,116 @@ export const DayGrid: FC<DayGridProps> = ({
   const {
     viewMode,
     setViewMode,
-    scrollRef,
+    isDesktop,
     layout,
-    currentBlockStart,
+    pageStart,
+    isOnToday,
+    direction,
     navigate,
     goToToday,
   } = useDayGrid(today);
-
-  const currentBlockDates = useMemo(
-    () => datesInBlock(viewMode, currentBlockStart),
-    [viewMode, currentBlockStart]
-  );
+  const swipeHandlers = useSwipeNavigate(navigate);
 
   const overallScore = useMemo(() => {
-    const daily = currentBlockDates
+    const daily = layout.dates
       .map((date) => getOverallScoreForDate(date))
       .filter((s): s is number => s !== undefined);
     if (daily.length === 0) return null;
     return daily.reduce((a, b) => a + b, 0) / daily.length;
-  }, [currentBlockDates, getOverallScoreForDate]);
+  }, [layout.dates, getOverallScoreForDate]);
 
   const rangeLabel =
     viewMode === "week"
-      ? formatWeekRange(currentBlockStart)
-      : formatMonthYear(currentBlockStart);
+      ? formatWeekRange(pageStart, layout.dates.length)
+      : formatMonthYear(pageStart);
+
+  const scoreLabel =
+    viewMode === "month"
+      ? "Средний балл месяца"
+      : isDesktop
+        ? "Средний балл за 2 недели"
+        : "Средний балл недели";
+
+  const pageKey = `${viewMode}-${pageStart.format("YYYY-MM-DD")}`;
+  const pageTransitionClass = cn(
+    "animate-in fade-in-0 duration-150",
+    direction === 1 ? "slide-in-from-right-3" : "slide-in-from-left-3"
+  );
+
+  const nameCell = (habit: Habit) => (
+    <HabitNameCell
+      key={`${habit.id}-name`}
+      habit={habit}
+      streak={calculateStreak(entries, habit.id, today)}
+      onHide={onHide}
+    />
+  );
+
+  const dayCells = (habit: Habit) => (
+    <HabitDayCells
+      key={`${habit.id}-cells`}
+      habitId={habit.id}
+      layout={layout}
+      entriesByDate={entriesByHabit.get(habit.id)}
+      onCellClick={onCellClick}
+    />
+  );
 
   return (
     <>
       <DayGridToolbar
         rangeLabel={rangeLabel}
+        scoreLabel={scoreLabel}
         overallScore={overallScore}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        isOnToday={isOnToday}
         navigate={navigate}
         goToToday={goToToday}
+        pageKey={pageKey}
+        pageTransitionClass={pageTransitionClass}
       />
 
-      <div className="flex gap-4">
-        <div className="flex w-56 shrink-0 flex-col">
-          <div className="mb-4.5 h-12" />
+      {isDesktop ? (
+        <div className="flex gap-4">
+          <div className="flex w-56 shrink-0 flex-col">
+            <div className="mb-4.5 h-12" />
 
-          <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
+              {visibleHabits.map(nameCell)}
+            </div>
+          </div>
+
+          <div
+            key={pageKey}
+            className={cn("min-w-0 flex-1", pageTransitionClass)}
+          >
+            <DayGridHeader layout={layout} />
+
+            <div className="flex flex-col gap-1">
+              {visibleHabits.map(dayCells)}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4" {...swipeHandlers}>
+          <div key={pageKey} className={pageTransitionClass}>
+            <DayGridHeader layout={layout} />
+          </div>
+
+          <div className="flex flex-col gap-4">
             {visibleHabits.map((habit) => (
-              <HabitNameCell
-                key={habit.id}
-                habit={habit}
-                streak={calculateStreak(entries, habit.id, today)}
-                onHide={onHide}
-              />
+              <div key={habit.id} className="flex flex-col gap-1.5">
+                {nameCell(habit)}
+
+                <div key={pageKey} className={pageTransitionClass}>
+                  {dayCells(habit)}
+                </div>
+              </div>
             ))}
           </div>
         </div>
-
-        <div ref={scrollRef} className="no-scrollbar overflow-x-auto">
-          <DayGridHeader layout={layout} />
-
-          <div className="flex flex-col gap-1">
-            {visibleHabits.map((habit) => (
-              <HabitDayCells
-                key={habit.id}
-                habitId={habit.id}
-                layout={layout}
-                entriesByDate={entriesByHabit.get(habit.id)}
-                onCellClick={onCellClick}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
     </>
   );
 };
