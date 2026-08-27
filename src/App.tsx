@@ -1,13 +1,16 @@
 import type { FC } from "react";
 import { Route, Routes } from "react-router";
 
+import { LoadingScreen } from "./components/LoadingScreen";
 import { jsonFileDataStore } from "./data/jsonFileDataStore";
 import { useHabitsData } from "./data/useHabitsData";
+import { LoginPage } from "./pages/LoginPage";
 import { StatsPage } from "./pages/StatsPage";
 import { WeekPage } from "./pages/WeekPage";
 import { Layout } from "./routes/Layout";
+import { RequireAuth } from "./routes/RequireAuth";
 
-export const App: FC = () => {
+const HabitsApp: FC = () => {
   const { data, error, saveEntry, toggleHabitVisibility } =
     useHabitsData(jsonFileDataStore);
 
@@ -20,11 +23,7 @@ export const App: FC = () => {
   }
 
   if (!data) {
-    return (
-      <div className="flex justify-center py-24 text-sm text-muted-foreground">
-        Загрузка…
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -42,6 +41,18 @@ export const App: FC = () => {
         />
 
         <Route path="stats" element={<StatsPage data={data} />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export const App: FC = () => {
+  return (
+    <Routes>
+      <Route path="login" element={<LoginPage />} />
+
+      <Route element={<RequireAuth />}>
+        <Route path="*" element={<HabitsApp />} />
       </Route>
     </Routes>
   );

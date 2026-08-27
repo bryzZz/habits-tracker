@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { NavLink, Outlet } from "react-router";
 
+import { SignOutButton } from "../components/SignOutButton";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { cn } from "../lib/utils";
 
@@ -22,8 +23,10 @@ export const Layout: FC = () => {
           Статистика
         </NavLink>
 
-        <div className="absolute top-3 left-4 md:right-4 md:left-auto">
+        <div className="absolute top-3 left-4 flex gap-1 md:right-4 md:left-auto">
           <ThemeToggle />
+
+          <SignOutButton />
         </div>
       </nav>
 
