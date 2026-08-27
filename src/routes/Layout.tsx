@@ -1,12 +1,13 @@
 import type { FC } from "react";
 import { NavLink, Outlet } from "react-router";
 
+import { ThemeToggle } from "../components/ThemeToggle";
 import { cn } from "../lib/utils";
 
 export const Layout: FC = () => {
   return (
     <div className="min-h-screen">
-      <nav className="flex justify-center gap-1 border-b border-border py-3">
+      <nav className="relative flex justify-center gap-1 border-b border-border py-3">
         <NavLink
           to="/"
           end
@@ -35,6 +36,10 @@ export const Layout: FC = () => {
         >
           Статистика
         </NavLink>
+
+        <div className="absolute right-4">
+          <ThemeToggle />
+        </div>
       </nav>
 
       <Outlet />

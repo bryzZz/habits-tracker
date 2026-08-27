@@ -1,7 +1,19 @@
 <!doctype html>
-<html lang="ru" class="dark">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Kept in sync by hand with src/lib/theme.ts's resolveTheme — runs
+      // before first paint, so it can't import that module.
+      (function () {
+        var stored = localStorage.getItem("theme");
+        var isDark =
+          stored === "light" || stored === "dark"
+            ? stored === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", isDark);
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
