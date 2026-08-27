@@ -2,16 +2,13 @@ import dayjs, { type Dayjs } from "dayjs";
 
 import type { DayEntry } from "../data/types";
 
-/**
- * Consecutive days with score > 0, walking back from `today`. An unfilled
- * past day counts as score 0 and breaks the streak; an unfilled `today`
- * doesn't (CONTEXT.md "Стрик" / grilling round 3).
- */
-export function calculateStreak(
+/** Consecutive days with score > 0, walking back from `today`; an unfilled
+ * `today` itself doesn't break the streak (CONTEXT.md "Стрик"). */
+export const calculateStreak = (
   entries: DayEntry[],
   habitId: string,
   today: Dayjs
-): number {
+): number => {
   const scoreByDate = new Map(
     entries.filter((e) => e.habitId === habitId).map((e) => [e.date, e.score])
   );
@@ -29,17 +26,14 @@ export function calculateStreak(
     cursor = cursor.subtract(1, "day");
   }
   return streak;
-}
+};
 
-/**
- * Longest streak in the habit's whole recorded history, walking every
- * calendar day between its first and last entry (a gap with no entry
- * counts as 0, same rule as `calculateStreak`).
- */
-export function calculateBestStreak(
+/** Longest streak across the habit's whole history — walks every calendar
+ * day between its first and last entry; a gap counts as 0, like `calculateStreak`. */
+export const calculateBestStreak = (
   entries: DayEntry[],
   habitId: string
-): number {
+): number => {
   const habitEntries = entries.filter((e) => e.habitId === habitId);
   if (habitEntries.length === 0) return 0;
 
@@ -63,4 +57,4 @@ export function calculateBestStreak(
     }
   }
   return best;
-}
+};

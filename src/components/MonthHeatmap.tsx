@@ -1,4 +1,5 @@
 import type { Dayjs } from "dayjs";
+import type { FC } from "react";
 
 import { monthGridWeeks, weekdayLabels } from "../lib/dates";
 import { colorForScore } from "../lib/scoreRamp";
@@ -8,7 +9,7 @@ interface MonthHeatmapProps {
   scoreByDate: Map<string, number>;
 }
 
-export function MonthHeatmap({ month, scoreByDate }: MonthHeatmapProps) {
+export const MonthHeatmap: FC<MonthHeatmapProps> = ({ month, scoreByDate }) => {
   const weeks = monthGridWeeks(month);
   const labels = weekdayLabels();
 
@@ -18,12 +19,13 @@ export function MonthHeatmap({ month, scoreByDate }: MonthHeatmapProps) {
         {labels.map((label) => (
           <div
             key={label}
-            className="text-ink-muted flex h-9 items-center text-[11px]"
+            className="flex h-9 items-center text-[11px] text-ink-muted"
           >
             {label}
           </div>
         ))}
       </div>
+
       <div className="flex grow flex-col gap-1">
         {weeks.map((week) => (
           <div
@@ -38,7 +40,7 @@ export function MonthHeatmap({ month, scoreByDate }: MonthHeatmapProps) {
                 return (
                   <div
                     key={iso}
-                    className="border-border-strong h-9 rounded-lg border-[1.5px] border-dashed"
+                    className="h-9 rounded-lg border border-dashed border-border-strong"
                   />
                 );
               }
@@ -56,4 +58,4 @@ export function MonthHeatmap({ month, scoreByDate }: MonthHeatmapProps) {
       </div>
     </div>
   );
-}
+};

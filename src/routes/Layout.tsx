@@ -1,9 +1,10 @@
+import type { FC } from "react";
 import { NavLink, Outlet } from "react-router";
 
-export function Layout() {
+export const Layout: FC = () => {
   return (
     <div className="min-h-screen">
-      <nav className="border-border flex justify-center gap-1 border-b py-3">
+      <nav className="flex justify-center gap-1 border-b border-border py-3">
         <NavLink
           to="/"
           end
@@ -14,6 +15,7 @@ export function Layout() {
         >
           Неделя
         </NavLink>
+
         <NavLink
           to="/stats"
           className={({ isActive }) =>
@@ -24,7 +26,8 @@ export function Layout() {
           Статистика
         </NavLink>
       </nav>
+
       <Outlet />
     </div>
   );
-}
+};

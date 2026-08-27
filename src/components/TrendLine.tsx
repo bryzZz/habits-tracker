@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 interface TrendLineProps {
   points: { date: string; score: number }[];
 }
@@ -5,10 +7,10 @@ interface TrendLineProps {
 const WIDTH = 640;
 const HEIGHT = 180;
 
-export function TrendLine({ points }: TrendLineProps) {
+export const TrendLine: FC<TrendLineProps> = ({ points }) => {
   if (points.length === 0) {
     return (
-      <div className="text-ink-muted flex h-45 items-center justify-center text-sm">
+      <div className="flex h-45 items-center justify-center text-sm text-ink-muted">
         Нет данных за этот период
       </div>
     );
@@ -27,6 +29,7 @@ export function TrendLine({ points }: TrendLineProps) {
       className="h-auto w-full overflow-visible"
     >
       <line x1={0} y1={0} x2={WIDTH} y2={0} stroke="#2c2c2a" strokeWidth={1} />
+
       <line
         x1={0}
         y1={HEIGHT / 2}
@@ -35,6 +38,7 @@ export function TrendLine({ points }: TrendLineProps) {
         stroke="#2c2c2a"
         strokeWidth={1}
       />
+
       <line
         x1={0}
         y1={HEIGHT}
@@ -43,15 +47,19 @@ export function TrendLine({ points }: TrendLineProps) {
         stroke="#383835"
         strokeWidth={1}
       />
+
       <text x={WIDTH + 8} y={4} fill="#898781" fontSize={11}>
         10
       </text>
+
       <text x={WIDTH + 8} y={HEIGHT / 2 + 4} fill="#898781" fontSize={11}>
         5
       </text>
+
       <text x={WIDTH + 8} y={HEIGHT + 4} fill="#898781" fontSize={11}>
         0
       </text>
+
       <polyline
         points={coords.map((c) => `${c.x},${c.y}`).join(" ")}
         fill="none"
@@ -60,6 +68,7 @@ export function TrendLine({ points }: TrendLineProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+
       <circle
         cx={last.x}
         cy={last.y}
@@ -68,6 +77,7 @@ export function TrendLine({ points }: TrendLineProps) {
         stroke="#1a1a19"
         strokeWidth={2}
       />
+
       <text
         x={last.x}
         y={last.y - 14}
@@ -80,4 +90,4 @@ export function TrendLine({ points }: TrendLineProps) {
       </text>
     </svg>
   );
-}
+};

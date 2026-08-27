@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { memo } from "react";
+import { type FC, memo } from "react";
 
 import type { DayGridLayout } from "../hooks/useDayGrid";
 import { DayGridBlockRow } from "./DayGridBlockRow";
@@ -9,15 +9,13 @@ interface DayGridHeaderProps {
   layout: DayGridLayout;
 }
 
-export const DayGridHeader = memo(function DayGridHeader({
-  layout,
-}: DayGridHeaderProps) {
+export const DayGridHeader: FC<DayGridHeaderProps> = memo(({ layout }) => {
   const { today, size } = layout;
 
   return (
     <DayGridBlockRow
       layout={layout}
-      className="border-gridline relative mb-4.5 h-12 border-b"
+      className="relative mb-4.5 h-12 border-b border-gridline"
       renderDate={(date) => (
         <DayLabel
           key={date}

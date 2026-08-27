@@ -14,15 +14,15 @@ export const SCORE_RAMP: readonly string[] = [
 ];
 
 /** score is 0..1; returns the ramp's hex for its nearest 0–10 step. */
-export function colorForScore(score: number): string {
+export const colorForScore = (score: number): string => {
   const step = Math.round(Math.max(0, Math.min(1, score)) * 10);
   return SCORE_RAMP[step];
-}
+};
 
-export function scoreToStep(score: number): number {
+export const scoreToStep = (score: number): number => {
   return Math.round(Math.max(0, Math.min(1, score)) * 10);
-}
+};
 
-export function stepToScore(step: number): number {
+export const stepToScore = (step: number): number => {
   return Math.max(0, Math.min(10, step)) / 10;
-}
+};

@@ -4,14 +4,13 @@ import { setHabitVisibility, upsertEntry } from "../lib/habitsData";
 import type { DataStore } from "./dataStore";
 import type { DayEntry, HabitsData } from "./types";
 
-export function useHabitsData(store: DataStore) {
+export const useHabitsData = (store: DataStore) => {
   const [data, setData] = useState<HabitsData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const dataRef = useRef<HabitsData | null>(null);
 
-  // Persists outside setData's updater — React StrictMode double-invokes
-  // functional setState updaters in dev, which would otherwise fire two
-  // concurrent store.save() calls per mutation and race the local file API.
+  // Kept outside setData's updater — StrictMode double-invokes functional
+  // updaters in dev, which would double-fire store.save() otherwise.
   const persist = useCallback(
     (next: HabitsData) => {
       setData(next);
@@ -60,4 +59,4 @@ export function useHabitsData(store: DataStore) {
   }, [store]);
 
   return { data, error, saveEntry, toggleHabitVisibility };
-}
+};

@@ -10,10 +10,8 @@ interface Editing {
   anchorRect: DOMRect;
 }
 
-/**
- * Stable identity so `HabitDayCells`'s `React.memo` isn't defeated by a
- * fresh closure per habit row on every render.
- */
+/** Stable identity so `HabitDayCells`'s `React.memo` isn't defeated by a
+ * fresh closure per habit row on every render. */
 export const useEntryPopup = (
   data: HabitsData,
   entriesByHabit: Map<string, Map<string, DayEntry>>,
@@ -31,8 +29,7 @@ export const useEntryPopup = (
   );
 
   // Only flip `open` off, keep `editing` (and its `anchorRect`) around so
-  // the popup doesn't jump to a fallback position while Radix animates it
-  // closed — the data is stale but unused once `open` is false.
+  // the popup doesn't jump to a fallback position while Radix animates it closed.
   const close = useCallback(() => setOpen(false), []);
 
   const editingHabit = editing

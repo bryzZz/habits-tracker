@@ -12,6 +12,10 @@ Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `
 
 Single-context layout (root `CONTEXT.md` + `docs/adr/`). See `docs/agents/domain.md`.
 
+### Coding standards
+
+Component/hook/export/comment/JSX/Tailwind conventions for `src/**`. See `CODING_STANDARDS.md`.
+
 ## Package manager
 
 pnpm only — never npm or yarn (`pnpm install`, `pnpm run <script>`, `pnpm dlx`).

@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import { useCallback } from "react";
 
 import { DayGrid } from "../components/DayGrid";
@@ -14,11 +15,11 @@ interface WeekPageProps {
   onToggleVisibility: (habitId: string, visible: boolean) => void;
 }
 
-export function WeekPage({
+export const WeekPage: FC<WeekPageProps> = ({
   data,
   onSaveEntry,
   onToggleVisibility,
-}: WeekPageProps) {
+}) => {
   const { today, entriesByHabit, getOverallScoreForDate } = useHabitsView(data);
   const { visibleHabits, hiddenHabits } = useVisibleHabits(data.habits);
   const { openEditor, entryPopupProps } = useEntryPopup(
@@ -53,4 +54,4 @@ export function WeekPage({
       <EntryPopup {...entryPopupProps} />
     </div>
   );
-}
+};

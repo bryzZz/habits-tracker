@@ -3,8 +3,9 @@ import { useMemo } from "react";
 import type { Habit } from "../data/types";
 import { PRIORITY_ORDER } from "../data/types";
 
-/** Splits habits into the flat, priority-ordered visible list and the hidden list, isolated from WeekPage so priority/visibility ordering changes don't land in the same file as day-grid changes. */
-export function useVisibleHabits(habits: Habit[]) {
+/** Priority-ordered visible list + hidden list, split out of WeekPage so
+ * priority/visibility changes don't collide with day-grid changes there. */
+export const useVisibleHabits = (habits: Habit[]) => {
   const visibleHabits = useMemo(
     () =>
       PRIORITY_ORDER.flatMap((priority) =>
@@ -19,4 +20,4 @@ export function useVisibleHabits(habits: Habit[]) {
   );
 
   return { visibleHabits, hiddenHabits };
-}
+};

@@ -10,6 +10,10 @@ Use /tdd where possible, at pre-agreed seams.
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
 
+Once the full test suite passes, run `pnpm run lint` and `pnpm run build`. Both must exit clean
+before moving on — fix whatever they flag (lint autofixes what it can; anything left is a real
+issue). Don't restate this as a per-ticket acceptance criterion; it's guaranteed by this step.
+
 Once done, use /code-review to review the work.
 
 Check off the acceptance criteria this ticket satisfies and set `Status: done` in the ticket file.

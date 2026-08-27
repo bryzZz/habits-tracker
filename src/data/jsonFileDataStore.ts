@@ -4,7 +4,7 @@ import type { HabitsData } from "./types";
 const ENDPOINT = "/api/habits-data";
 
 export const jsonFileDataStore: DataStore = {
-  async load(): Promise<HabitsData> {
+  load: async (): Promise<HabitsData> => {
     const res = await fetch(ENDPOINT);
     if (!res.ok) {
       throw new Error(`Failed to load habits data: ${res.status}`);
@@ -12,7 +12,7 @@ export const jsonFileDataStore: DataStore = {
     return res.json();
   },
 
-  async save(data: HabitsData): Promise<void> {
+  save: async (data: HabitsData): Promise<void> => {
     const res = await fetch(ENDPOINT, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },

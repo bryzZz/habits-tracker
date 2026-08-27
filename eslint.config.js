@@ -39,6 +39,31 @@ export default tseslint.config(
     },
   },
   {
+    // Components, hooks, and helpers are always `const` arrow functions, and
+    // src/ never uses default exports — see CODING_STANDARDS.md.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/components/ui/**"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "FunctionDeclaration",
+          message:
+            "Use a const arrow function instead of a function declaration.",
+        },
+        {
+          selector: "FunctionExpression",
+          message:
+            "Use a const arrow function instead of a function expression.",
+        },
+        {
+          selector: "ExportDefaultDeclaration",
+          message: "No default exports in src/ — use a named export.",
+        },
+      ],
+    },
+  },
+  {
     // shadcn/ui generated primitives: exporting a cva() variants function
     // alongside the component is the standard shadcn pattern.
     files: ["src/components/ui/**/*.tsx"],

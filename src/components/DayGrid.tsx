@@ -1,4 +1,5 @@
 import type { Dayjs } from "dayjs";
+import type { FC } from "react";
 import { useMemo } from "react";
 
 import type { DayEntry, Habit } from "../data/types";
@@ -21,20 +22,9 @@ interface DayGridProps {
   onHide: (habitId: string) => void;
 }
 
-/**
- * Owns `useDayGrid`'s virtualizer-backed scroll state. `@tanstack/react-virtual`
- * re-renders its caller on every native scroll event, not just when the
- * visible block set changes (see the `react-hooks/incompatible-library` lint
- * warning on `useDayGrid`) — measured at ~120 re-renders/sec during a scroll
- * gesture. Isolated into its own component so that frequency stays scoped to
- * the grid instead of forcing `WeekPage` itself (and everything else it
- * renders — the entry popup, hidden-habits accordion) to re-render along
- * with it. `DayGridToolbar` (badge/nav-row markup) is rendered directly here
- * rather than by `WeekPage`, so it re-renders at the grid's frequency too,
- * since it depends on `viewMode`/`currentBlockStart`, rather than at
- * `WeekPage`'s (now much lower) frequency.
- */
-export function DayGrid({
+/** Isolates useDayGrid's ~120 scroll-driven re-renders/sec here, away from
+ * WeekPage (which also renders the entry popup and hidden-habits accordion). */
+export const DayGrid: FC<DayGridProps> = ({
   today,
   entries,
   visibleHabits,
@@ -42,7 +32,7 @@ export function DayGrid({
   getOverallScoreForDate,
   onCellClick,
   onHide,
-}: DayGridProps) {
+}) => {
   const {
     viewMode,
     setViewMode,
@@ -116,4 +106,4 @@ export function DayGrid({
       </div>
     </>
   );
-}
+};

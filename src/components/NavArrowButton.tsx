@@ -1,4 +1,5 @@
 import { ChevronLeft } from "lucide-react";
+import type { FC } from "react";
 
 import { Button } from "./ui/button";
 
@@ -7,12 +8,15 @@ interface NavArrowButtonProps {
   onClick: () => void;
 }
 
-export function NavArrowButton({ direction, onClick }: NavArrowButtonProps) {
+export const NavArrowButton: FC<NavArrowButtonProps> = ({
+  direction,
+  onClick,
+}) => {
   return (
     <Button type="button" variant="outline" size="icon" onClick={onClick}>
       <ChevronLeft
-        className={"h-4 w-4" + (direction === "right" ? " rotate-180" : "")}
+        className={"size-4" + (direction === "right" ? " rotate-180" : "")}
       />
     </Button>
   );
-}
+};

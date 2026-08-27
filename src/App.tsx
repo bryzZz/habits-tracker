@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import { Route, Routes } from "react-router";
 
 import { jsonFileDataStore } from "./data/jsonFileDataStore";
@@ -6,7 +7,7 @@ import { StatsPage } from "./pages/StatsPage";
 import { WeekPage } from "./pages/WeekPage";
 import { Layout } from "./routes/Layout";
 
-function App() {
+export const App: FC = () => {
   const { data, error, saveEntry, toggleHabitVisibility } =
     useHabitsData(jsonFileDataStore);
 
@@ -20,7 +21,7 @@ function App() {
 
   if (!data) {
     return (
-      <div className="text-ink-muted flex justify-center py-24 text-sm">
+      <div className="flex justify-center py-24 text-sm text-ink-muted">
         Загрузка…
       </div>
     );
@@ -44,6 +45,4 @@ function App() {
       </Route>
     </Routes>
   );
-}
-
-export default App;
+};

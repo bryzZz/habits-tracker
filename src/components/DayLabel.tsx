@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import { twMerge } from "tailwind-merge";
+import type { FC } from "react";
 
 import { CELL_PX, type GridViewMode } from "../lib/dayGrid";
+import { cn } from "../lib/utils";
 
 interface DayLabelProps {
   date: string;
@@ -9,21 +10,21 @@ interface DayLabelProps {
   size: GridViewMode;
 }
 
-export function DayLabel({ date, isToday, size }: DayLabelProps) {
+export const DayLabel: FC<DayLabelProps> = ({ date, isToday, size }) => {
   const d = dayjs(date);
   const weekday = d.format("dd");
 
   return (
     <div
-      className={twMerge(
-        "shrink-0 text-center border-2 border-transparent rounded-lg py-0.5",
-        isToday && "text-ink border-priority"
+      className={cn(
+        "shrink-0 rounded-lg border-2 border-transparent py-0.5 text-center",
+        isToday && "border-priority text-ink"
       )}
       style={{ width: CELL_PX[size] }}
     >
       <div
-        className={twMerge(
-          "text-ink-muted text-[11px] mb-0.5 font-bold tracking-wide uppercase",
+        className={cn(
+          "mb-0.5 text-[11px] font-bold tracking-wide text-ink-muted uppercase",
           isToday && "text-ink"
         )}
       >
@@ -31,8 +32,8 @@ export function DayLabel({ date, isToday, size }: DayLabelProps) {
       </div>
 
       <div
-        className={twMerge(
-          "text-ink-secondary text-xs tabular-nums",
+        className={cn(
+          "text-xs text-ink-secondary tabular-nums",
           isToday && "text-ink"
         )}
       >
@@ -40,4 +41,4 @@ export function DayLabel({ date, isToday, size }: DayLabelProps) {
       </div>
     </div>
   );
-}
+};

@@ -32,17 +32,13 @@ export interface DayGridLayout {
   size: GridViewMode;
 }
 
-/**
- * Drives the horizontally-scrollable, virtualized week/month day grid: which
- * blocks are mounted, the current (leftmost-visible) block for the range
- * label, and arrow/"today" navigation. Blocks are indexed relative to a
- * fixed origin (today's block at mount) so the addressable range never
- * shifts under navigation — see src/lib/dayGrid.ts.
- */
-export function useDayGrid(today: Dayjs) {
+/** Drives the virtualized week/month day grid: mounted blocks, the current
+ * range label, and arrow/"today" navigation — see src/lib/dayGrid.ts. */
+export const useDayGrid = (today: Dayjs) => {
   const [viewMode, setViewMode] = useState<GridViewMode>("week");
   const [focusDate, setFocusDate] = useState(today);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const ignoreNextScrollEnd = useRef(false);
 
   const origin = useMemo(
     () => originBlockStart(viewMode, today),
@@ -61,70 +57,11 @@ export function useDayGrid(today: Dayjs) {
   const currentIndex = indexForDate(viewMode, origin, focusDate);
   const currentBlockStart = blockStartForIndex(viewMode, origin, currentIndex);
 
-  // Scroll position is driven by our own pixel math (matching react-virtual's
-  // item offsets exactly) rather than `virtualizer.scrollToIndex`, which
-  // doesn't land on the same offset `getVirtualItems()` renders at in this
-  // layout.
-  const ignoreNextScrollEnd = useRef(false);
-  function scrollToIndex(index: number, behavior?: ScrollBehavior) {
-    ignoreNextScrollEnd.current = true;
-    setTimeout(() => {
-      ignoreNextScrollEnd.current = false;
-    }, 1000);
-    scrollRef.current?.scrollTo({
-      left: offsetForIndex(viewMode, origin, index),
-      behavior,
-    });
-  }
-
-  // Reposition on mount and whenever the view mode changes (block sizing
-  // differs completely between week/month).
-  useEffect(() => {
-    scrollToIndex(currentIndex);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewMode]);
-
-  // Scroll-spy: update the range label once scrolling has settled (native
-  // `scrollend`, not every scroll frame). Ignores scrollend caused by our
-  // own programmatic scrollToIndex, which would otherwise collapse the
-  // already-known focus date down to its block start.
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const onScrollEnd = () => {
-      if (ignoreNextScrollEnd.current) {
-        ignoreNextScrollEnd.current = false;
-        return;
-      }
-      const index = indexForOffset(viewMode, origin, el.scrollLeft);
-      setFocusDate(blockStartForIndex(viewMode, origin, index));
-    };
-    el.addEventListener("scrollend", onScrollEnd);
-    return () => el.removeEventListener("scrollend", onScrollEnd);
-  }, [viewMode, origin]);
-
-  function navigate(direction: -1 | 1) {
-    const nextIndex = Math.min(
-      Math.max(currentIndex + direction, 0),
-      totalBlocks(viewMode) - 1
-    );
-    setFocusDate(blockStartForIndex(viewMode, origin, nextIndex));
-    scrollToIndex(nextIndex, "smooth");
-  }
-
-  function goToToday() {
-    setFocusDate(today);
-    scrollToIndex(originIndex(viewMode), "smooth");
-  }
-
-  // Memoized against react-virtual's own (referentially stable while the
-  // visible range doesn't change) `getVirtualItems()` output — without this,
-  // `blocks`/`layout` got a new identity on every render, defeating
-  // `React.memo` on the row/header components and re-rendering every habit
-  // row on every scroll-driven state update.
   const virtualItems = virtualizer.getVirtualItems();
   const totalWidth = virtualizer.getTotalSize();
 
+  // Memoized against react-virtual's own stable output, or `blocks`/`layout`
+  // get a new identity every render and defeat `React.memo` on row/header components.
   const blocks: DayGridBlock[] = useMemo(
     () =>
       virtualItems.map((item) => ({
@@ -145,6 +82,57 @@ export function useDayGrid(today: Dayjs) {
     [blocks, totalWidth, today, viewMode]
   );
 
+  // Driven by our own pixel math (matching react-virtual's own item offsets)
+  // rather than `virtualizer.scrollToIndex`, which doesn't land the same place.
+  const scrollToIndex = (index: number, behavior?: ScrollBehavior) => {
+    ignoreNextScrollEnd.current = true;
+    setTimeout(() => {
+      ignoreNextScrollEnd.current = false;
+    }, 1000);
+    scrollRef.current?.scrollTo({
+      left: offsetForIndex(viewMode, origin, index),
+      behavior,
+    });
+  };
+
+  const navigate = (direction: -1 | 1) => {
+    const nextIndex = Math.min(
+      Math.max(currentIndex + direction, 0),
+      totalBlocks(viewMode) - 1
+    );
+    setFocusDate(blockStartForIndex(viewMode, origin, nextIndex));
+    scrollToIndex(nextIndex, "smooth");
+  };
+
+  const goToToday = () => {
+    setFocusDate(today);
+    scrollToIndex(originIndex(viewMode), "smooth");
+  };
+
+  // Reposition on mount and whenever the view mode changes (block sizing
+  // differs completely between week/month).
+  useEffect(() => {
+    scrollToIndex(currentIndex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode]);
+
+  // Scroll-spy: updates the range label once scrolling settles (native
+  // `scrollend`), ignoring scrollend caused by our own scrollToIndex.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScrollEnd = () => {
+      if (ignoreNextScrollEnd.current) {
+        ignoreNextScrollEnd.current = false;
+        return;
+      }
+      const index = indexForOffset(viewMode, origin, el.scrollLeft);
+      setFocusDate(blockStartForIndex(viewMode, origin, index));
+    };
+    el.addEventListener("scrollend", onScrollEnd);
+    return () => el.removeEventListener("scrollend", onScrollEnd);
+  }, [viewMode, origin]);
+
   return {
     viewMode,
     setViewMode,
@@ -154,4 +142,4 @@ export function useDayGrid(today: Dayjs) {
     navigate,
     goToToday,
   };
-}
+};

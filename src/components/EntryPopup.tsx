@@ -1,7 +1,9 @@
+import type { FC } from "react";
 import { useState } from "react";
 
 import type { QuickAnswer } from "../data/types";
 import { colorForScore, scoreToStep, stepToScore } from "../lib/scoreRamp";
+import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
 import { Popover, PopoverAnchor, PopoverContent } from "./ui/popover";
 import { Slider } from "./ui/slider";
@@ -21,19 +23,17 @@ interface EntryPopupProps {
   onClose: () => void;
 }
 
-const EMPTY_ANCHOR_RECT = { top: 0, left: 0, width: 0, height: 0 };
-
-export function EntryPopup({
+export const EntryPopup: FC<EntryPopupProps> = ({
   open,
   habitName,
   dateLabel,
   quickAnswers = [],
   initialScore = 0,
   initialNote = "",
-  anchorRect = EMPTY_ANCHOR_RECT,
+  anchorRect = { top: 0, left: 0, width: 0, height: 0 },
   onSave,
   onClose,
-}: EntryPopupProps) {
+}) => {
   const [score, setScore] = useState(initialScore);
   const [note, setNote] = useState(initialNote);
   const step = scoreToStep(score);
@@ -53,15 +53,14 @@ export function EntryPopup({
           }}
         />
       </PopoverAnchor>
+
       <PopoverContent
         align="start"
         sideOffset={8}
         className="w-80 p-4.5"
         onPointerDownOutside={(event) => {
-          // Clicking another day cell re-anchors this same popup (its own
-          // onClick calls back into openEditor) instead of dismissing it —
-          // don't let Radix close it first, or it flickers shut before
-          // reopening at the new cell.
+          // Another day cell's onClick re-anchors this popup — don't let Radix's
+          // outside-click handler close it first, or it flickers shut before reopening.
           if ((event.target as Element).closest("[data-entry-trigger]")) {
             event.preventDefault();
           }
@@ -72,8 +71,10 @@ export function EntryPopup({
             <div className="font-display text-[15px] font-semibold">
               {habitName}
             </div>
-            <div className="text-ink-muted mt-0.5 text-xs">{dateLabel}</div>
+
+            <div className="mt-0.5 text-xs text-ink-muted">{dateLabel}</div>
           </div>
+
           <Button
             type="button"
             variant="outline"
@@ -81,7 +82,7 @@ export function EntryPopup({
             onClick={onClose}
             aria-label="Закрыть"
           >
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5">
+            <svg viewBox="0 0 24 24" className="size-3.5">
               <path
                 d="M6 6l12 12M18 6L6 18"
                 stroke="currentColor"
@@ -101,14 +102,15 @@ export function EntryPopup({
                   key={qa.text}
                   type="button"
                   onClick={() => setScore(qa.score)}
-                  className={
-                    "flex items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left text-[12.5px] " +
-                    (selected ? "border-ink bg-white/10" : "border-border")
-                  }
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left text-xs",
+                    selected ? "border-ink bg-white/10" : "border-border"
+                  )}
                 >
                   <span>{qa.text}</span>
+
                   <span
-                    className="ml-auto flex h-4.5 w-6 shrink-0 items-center justify-center rounded text-[10.5px] font-bold text-[#10130a] tabular-nums"
+                    className="ml-auto flex h-4.5 w-6 shrink-0 items-center justify-center rounded text-[10px] font-bold text-[#10130a] tabular-nums"
                     style={{ backgroundColor: colorForScore(qa.score) }}
                   >
                     {scoreToStep(qa.score)}
@@ -119,15 +121,17 @@ export function EntryPopup({
           </div>
         )}
 
-        <div className="bg-gridline h-px" />
+        <div className="h-px bg-gridline" />
 
         <div>
           <div className="flex items-baseline justify-between">
-            <span className="text-ink-secondary text-[11.5px] font-semibold">
+            <span className="text-[11px] font-semibold text-ink-secondary">
               Оценка
             </span>
+
             <span className="font-display text-lg font-bold">{step}</span>
           </div>
+
           <Slider
             min={0}
             max={10}
@@ -140,14 +144,15 @@ export function EntryPopup({
         </div>
 
         <div>
-          <div className="text-ink-secondary mb-2 text-[11.5px] font-semibold">
+          <div className="mb-2 text-[11px] font-semibold text-ink-secondary">
             Заметка
           </div>
+
           <Textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
-            className="resize-none text-[12.5px]"
+            className="resize-none text-xs"
           />
         </div>
 
@@ -155,6 +160,7 @@ export function EntryPopup({
           <Button type="button" variant="outline" onClick={onClose}>
             Отмена
           </Button>
+
           <Button type="button" onClick={() => onSave(score, note)}>
             Сохранить
           </Button>
@@ -162,4 +168,4 @@ export function EntryPopup({
       </PopoverContent>
     </Popover>
   );
-}
+};

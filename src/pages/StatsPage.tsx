@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { Flame } from "lucide-react";
+import type { FC } from "react";
 import { useMemo, useState } from "react";
 
 import { MonthHeatmap } from "../components/MonthHeatmap";
@@ -15,13 +16,11 @@ import { calculateBestStreak, calculateStreak } from "../lib/streak";
 
 type Period = "week" | "month";
 
-const LEGEND_STEPS = [0, 2, 4, 5, 6, 8, 10];
-
 interface StatsPageProps {
   data: HabitsData;
 }
 
-export function StatsPage({ data }: StatsPageProps) {
+export const StatsPage: FC<StatsPageProps> = ({ data }) => {
   const [period, setPeriod] = useState<Period>("month");
   const [selectedHabitId, setSelectedHabitId] = useState(
     () => data.habits[0]?.id ?? ""
@@ -81,6 +80,7 @@ export function StatsPage({ data }: StatsPageProps) {
     <div className="mx-auto max-w-6xl px-12 py-8">
       <div className="mb-7 flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">Статистика</h1>
+
         <ToggleGroup
           type="single"
           variant="outline"
@@ -88,19 +88,22 @@ export function StatsPage({ data }: StatsPageProps) {
           onValueChange={(v) => v && setPeriod(v as Period)}
         >
           <ToggleGroupItem value="week">Неделя</ToggleGroupItem>
+
           <ToggleGroupItem value="month">Месяц</ToggleGroupItem>
         </ToggleGroup>
       </div>
 
-      <div className="bg-surface border-border mb-7 rounded-[14px] border p-6">
+      <div className="mb-7 rounded-xl border border-border bg-surface p-6">
         <div className="mb-4.5 flex items-baseline justify-between">
           <div className="font-display text-base font-semibold">
             Общая картина — {formatMonthYear(today)}
           </div>
+
           <div className="flex items-center gap-2">
-            <span className="text-ink-muted text-[11px]">0</span>
+            <span className="text-[11px] text-ink-muted">0</span>
+
             <div className="flex gap-px">
-              {LEGEND_STEPS.map((s) => (
+              {[0, 2, 4, 5, 6, 8, 10].map((s) => (
                 <div
                   key={s}
                   className="h-2.5 w-3.5"
@@ -108,9 +111,11 @@ export function StatsPage({ data }: StatsPageProps) {
                 />
               ))}
             </div>
-            <span className="text-ink-muted text-[11px]">10</span>
+
+            <span className="text-[11px] text-ink-muted">10</span>
           </div>
         </div>
+
         <MonthHeatmap month={today} scoreByDate={overallByDate} />
       </div>
 
@@ -130,14 +135,16 @@ export function StatsPage({ data }: StatsPageProps) {
 
       {selectedHabit && (
         <div className="flex items-stretch gap-5">
-          <div className="bg-surface border-border grow rounded-[14px] border p-6">
-            <div className="font-display mb-4.5 text-base font-semibold">
+          <div className="grow rounded-xl border border-border bg-surface p-6">
+            <div className="mb-4.5 font-display text-base font-semibold">
               {selectedHabit.name} — тренд оценки
             </div>
+
             <TrendLine points={trendPoints} />
           </div>
+
           <div className="flex w-65 shrink-0 flex-col gap-3">
-            <div className="bg-surface border-border rounded-[14px] border p-6">
+            <div className="rounded-xl border border-border bg-surface p-6">
               <StatTile
                 label="Текущий стрик"
                 value={String(currentStreak)}
@@ -149,12 +156,15 @@ export function StatsPage({ data }: StatsPageProps) {
                 }
               />
             </div>
-            <div className="bg-surface border-border rounded-[14px] border p-6">
+
+            <div className="rounded-xl border border-border bg-surface p-6">
               <StatTile
                 label="Лучший стрик"
                 value={`${bestStreak} ${pluralizeDays(bestStreak)}`}
               />
-              <div className="bg-gridline my-3.5 h-px" />
+
+              <div className="my-3.5 h-px bg-gridline" />
+
               <StatTile
                 label={
                   period === "month"
@@ -169,4 +179,4 @@ export function StatsPage({ data }: StatsPageProps) {
       )}
     </div>
   );
-}
+};
