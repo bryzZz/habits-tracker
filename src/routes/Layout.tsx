@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import { NavLink, Outlet } from "react-router";
 
+import { cn } from "../lib/utils";
+
 export const Layout: FC = () => {
   return (
     <div className="min-h-screen">
@@ -9,8 +11,12 @@ export const Layout: FC = () => {
           to="/"
           end
           className={({ isActive }) =>
-            "rounded-lg px-4 py-1.5 text-sm font-semibold " +
-            (isActive ? "bg-surface text-ink" : "text-ink-muted")
+            cn(
+              "rounded-lg px-4 py-1.5 text-sm font-semibold",
+              isActive
+                ? "bg-accent text-accent-foreground"
+                : "text-muted-foreground"
+            )
           }
         >
           Неделя
@@ -19,8 +25,12 @@ export const Layout: FC = () => {
         <NavLink
           to="/stats"
           className={({ isActive }) =>
-            "rounded-lg px-4 py-1.5 text-sm font-semibold " +
-            (isActive ? "bg-surface text-ink" : "text-ink-muted")
+            cn(
+              "rounded-lg px-4 py-1.5 text-sm font-semibold",
+              isActive
+                ? "bg-accent text-accent-foreground"
+                : "text-muted-foreground"
+            )
           }
         >
           Статистика

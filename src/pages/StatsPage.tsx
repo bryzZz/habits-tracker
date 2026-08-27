@@ -93,14 +93,14 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
         </ToggleGroup>
       </div>
 
-      <div className="mb-7 rounded-xl border border-border bg-surface p-6">
+      <div className="mb-7 rounded-xl border border-border bg-card p-6">
         <div className="mb-4.5 flex items-baseline justify-between">
           <div className="font-display text-base font-semibold">
             Общая картина — {formatMonthYear(today)}
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-ink-muted">0</span>
+            <span className="text-[11px] text-muted-foreground">0</span>
 
             <div className="flex gap-px">
               {[0, 2, 4, 5, 6, 8, 10].map((s) => (
@@ -112,7 +112,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
               ))}
             </div>
 
-            <span className="text-[11px] text-ink-muted">10</span>
+            <span className="text-[11px] text-muted-foreground">10</span>
           </div>
         </div>
 
@@ -135,7 +135,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
 
       {selectedHabit && (
         <div className="flex items-stretch gap-5">
-          <div className="grow rounded-xl border border-border bg-surface p-6">
+          <div className="grow rounded-xl border border-border bg-card p-6">
             <div className="mb-4.5 font-display text-base font-semibold">
               {selectedHabit.name} — тренд оценки
             </div>
@@ -144,7 +144,7 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
           </div>
 
           <div className="flex w-65 shrink-0 flex-col gap-3">
-            <div className="rounded-xl border border-border bg-surface p-6">
+            <div className="rounded-xl border border-border bg-card p-6">
               <StatTile
                 label="Текущий стрик"
                 value={String(currentStreak)}
@@ -157,13 +157,13 @@ export const StatsPage: FC<StatsPageProps> = ({ data }) => {
               />
             </div>
 
-            <div className="rounded-xl border border-border bg-surface p-6">
+            <div className="rounded-xl border border-border bg-card p-6">
               <StatTile
                 label="Лучший стрик"
                 value={`${bestStreak} ${pluralizeDays(bestStreak)}`}
               />
 
-              <div className="my-3.5 h-px bg-gridline" />
+              <div className="my-3.5 h-px bg-border" />
 
               <StatTile
                 label={

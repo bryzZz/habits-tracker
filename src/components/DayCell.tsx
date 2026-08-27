@@ -31,7 +31,7 @@ export const DayCell: FC<DayCellProps> = ({
         type="button"
         data-entry-trigger
         onClick={onClick}
-        className={cn(baseClasses, "border-dashed border-border-strong")}
+        className={cn(baseClasses, "border-dashed border-input")}
         style={{ width: CELL_PX[size] }}
       />
     );
@@ -45,9 +45,7 @@ export const DayCell: FC<DayCellProps> = ({
       className={cn(baseClasses, !isToday && "border-black/20")}
       style={{
         width: CELL_PX[size],
-        backgroundColor: isToday
-          ? "var(--color-surface)"
-          : colorForScore(score ?? 0),
+        backgroundColor: isToday ? "var(--muted)" : colorForScore(score ?? 0),
       }}
     />
   );

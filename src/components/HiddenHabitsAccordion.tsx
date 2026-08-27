@@ -26,11 +26,11 @@ export const HiddenHabitsAccordion: FC<HiddenHabitsAccordionProps> = ({
       <AccordionItem value="hidden" className="border-b-0">
         <AccordionTrigger className="items-center rounded-md px-3.5 py-2 hover:no-underline">
           <span className="flex items-center gap-2.5">
-            <span className="font-display text-sm font-semibold text-ink-muted">
+            <span className="font-display text-sm font-semibold text-muted-foreground">
               Скрытые привычки
             </span>
 
-            <span className="text-xs text-ink-muted">
+            <span className="text-xs text-muted-foreground">
               {hiddenHabits.length}
             </span>
           </span>

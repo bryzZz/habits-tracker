@@ -13,7 +13,7 @@ export const App: FC = () => {
 
   if (error) {
     return (
-      <div className="mx-auto mt-6 max-w-6xl px-12 text-sm text-[#e34948]">
+      <div className="mx-auto mt-6 max-w-6xl px-12 text-sm text-destructive">
         Не удалось загрузить данные: {error}
       </div>
     );
@@ -21,7 +21,7 @@ export const App: FC = () => {
 
   if (!data) {
     return (
-      <div className="flex justify-center py-24 text-sm text-ink-muted">
+      <div className="flex justify-center py-24 text-sm text-muted-foreground">
         Загрузка…
       </div>
     );

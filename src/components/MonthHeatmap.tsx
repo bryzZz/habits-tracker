@@ -19,7 +19,7 @@ export const MonthHeatmap: FC<MonthHeatmapProps> = ({ month, scoreByDate }) => {
         {labels.map((label) => (
           <div
             key={label}
-            className="flex h-9 items-center text-[11px] text-ink-muted"
+            className="flex h-9 items-center text-[11px] text-muted-foreground"
           >
             {label}
           </div>
@@ -40,7 +40,7 @@ export const MonthHeatmap: FC<MonthHeatmapProps> = ({ month, scoreByDate }) => {
                 return (
                   <div
                     key={iso}
-                    className="h-9 rounded-lg border border-dashed border-border-strong"
+                    className="h-9 rounded-lg border border-dashed border-border"
                   />
                 );
               }

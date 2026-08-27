@@ -72,7 +72,9 @@ export const EntryPopup: FC<EntryPopupProps> = ({
               {habitName}
             </div>
 
-            <div className="mt-0.5 text-xs text-ink-muted">{dateLabel}</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">
+              {dateLabel}
+            </div>
           </div>
 
           <Button
@@ -104,7 +106,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
                   onClick={() => setScore(qa.score)}
                   className={cn(
                     "flex items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left text-xs",
-                    selected ? "border-ink bg-white/10" : "border-border"
+                    selected ? "border-foreground bg-white/10" : "border-border"
                   )}
                 >
                   <span>{qa.text}</span>
@@ -121,7 +123,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
           </div>
         )}
 
-        <div className="h-px bg-gridline" />
+        <div className="h-px bg-border" />
 
         <div>
           <div className="flex items-baseline justify-between">

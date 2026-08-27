@@ -32,13 +32,13 @@ export const DayGridToolbar: FC<DayGridToolbarProps> = ({
         </div>
 
         {overallScore !== null && (
-          <div className="flex items-center gap-2.5 rounded-xl border border-border bg-surface px-4 py-2">
+          <div className="flex items-center gap-2.5 rounded-xl border border-border bg-muted px-4 py-2">
             <span
               className="size-2.5 rounded-full"
               style={{ backgroundColor: "#9bac14" }}
             />
 
-            <span className="text-xs text-ink-muted">
+            <span className="text-xs text-muted-foreground">
               {viewMode === "week"
                 ? "Средний балл недели"
                 : "Средний балл месяца"}

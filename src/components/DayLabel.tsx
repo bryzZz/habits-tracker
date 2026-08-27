@@ -18,14 +18,14 @@ export const DayLabel: FC<DayLabelProps> = ({ date, isToday, size }) => {
     <div
       className={cn(
         "shrink-0 rounded-lg border-2 border-transparent py-0.5 text-center",
-        isToday && "border-priority text-ink"
+        isToday && "border-priority text-foreground"
       )}
       style={{ width: CELL_PX[size] }}
     >
       <div
         className={cn(
-          "mb-0.5 text-[11px] font-bold tracking-wide text-ink-muted uppercase",
-          isToday && "text-ink"
+          "mb-0.5 text-[11px] font-bold tracking-wide text-muted-foreground uppercase",
+          isToday && "text-foreground"
         )}
       >
         {weekday.charAt(0).toUpperCase() + weekday.slice(1)}
@@ -34,7 +34,7 @@ export const DayLabel: FC<DayLabelProps> = ({ date, isToday, size }) => {
       <div
         className={cn(
           "text-xs text-ink-secondary tabular-nums",
-          isToday && "text-ink"
+          isToday && "text-foreground"
         )}
       >
         {d.date()}

@@ -15,7 +15,7 @@ export const DayGridHeader: FC<DayGridHeaderProps> = memo(({ layout }) => {
   return (
     <DayGridBlockRow
       layout={layout}
-      className="relative mb-4.5 h-12 border-b border-gridline"
+      className="relative mb-4.5 h-12 border-b border-border"
       renderDate={(date) => (
         <DayLabel
           key={date}
