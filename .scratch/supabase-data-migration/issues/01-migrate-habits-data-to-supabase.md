@@ -24,7 +24,9 @@ production.
 export interface DataStore {
   loadHabits(): Promise<Habit[]>; // habits + quick_answers, unfiltered
   loadEntries(range: DateRange): Promise<DayEntry[]>; // scoped to the visible range
-  loadStreaks(habitId: string): Promise<{ currentStreak: number; bestStreak: number }>;
+  loadStreaks(
+    habitId: string
+  ): Promise<{ currentStreak: number; bestStreak: number }>;
   saveEntry(entry: DayEntry): Promise<void>;
   setHabitVisibility(habitId: string, visible: boolean): Promise<void>;
 }
