@@ -29,7 +29,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
   dateLabel,
   quickAnswers = [],
   initialScore = 0,
-  initialNote = "",
+  initialNote,
   anchorRect = { top: 0, left: 0, width: 0, height: 0 },
   onSave,
   onClose,
@@ -38,6 +38,11 @@ export const EntryPopup: FC<EntryPopupProps> = ({
   const [note, setNote] = useState(initialNote);
   const step = scoreToStep(score);
   const color = colorForScore(score);
+
+  const handleQuickAnswerClick = (qa: QuickAnswer) => {
+    setScore(qa.score);
+    setNote(qa.text ?? "");
+  };
 
   return (
     <Popover open={open} onOpenChange={(open) => !open && onClose()}>
@@ -103,7 +108,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
                 <button
                   key={qa.text}
                   type="button"
-                  onClick={() => setScore(qa.score)}
+                  onClick={() => handleQuickAnswerClick(qa)}
                   className={cn(
                     "flex items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left text-xs",
                     selected ? "border-foreground bg-white/10" : "border-border"
@@ -151,7 +156,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
           </div>
 
           <Textarea
-            value={note}
+            value={note ?? ""}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
             className="resize-none text-xs"
@@ -163,7 +168,7 @@ export const EntryPopup: FC<EntryPopupProps> = ({
             Отмена
           </Button>
 
-          <Button type="button" onClick={() => onSave(score, note)}>
+          <Button type="button" onClick={() => onSave(score, note ?? "")}>
             Сохранить
           </Button>
         </div>
