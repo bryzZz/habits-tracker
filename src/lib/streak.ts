@@ -1,6 +1,7 @@
 import dayjs, { type Dayjs } from "dayjs";
 
 import type { DayEntry } from "../data/types";
+import { toISODate } from "./dates";
 
 /** Consecutive days with score > 0, walking back from `today`; an unfilled
  * `today` itself doesn't break the streak (CONTEXT.md "Стрик"). */
@@ -14,13 +15,13 @@ export const calculateStreak = (
   );
 
   let cursor = today;
-  if (!scoreByDate.has(today.format("YYYY-MM-DD"))) {
+  if (!scoreByDate.has(toISODate(today))) {
     cursor = today.subtract(1, "day");
   }
 
   let streak = 0;
   while (true) {
-    const score = scoreByDate.get(cursor.format("YYYY-MM-DD")) ?? 0;
+    const score = scoreByDate.get(toISODate(cursor)) ?? 0;
     if (score <= 0) break;
     streak += 1;
     cursor = cursor.subtract(1, "day");
@@ -48,7 +49,7 @@ export const calculateBestStreak = (
     cursor.isSameOrBefore(last, "day");
     cursor = cursor.add(1, "day")
   ) {
-    const score = scoreByDate.get(cursor.format("YYYY-MM-DD")) ?? 0;
+    const score = scoreByDate.get(toISODate(cursor)) ?? 0;
     if (score > 0) {
       current += 1;
       best = Math.max(best, current);

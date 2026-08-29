@@ -1,60 +1,49 @@
-import type { Dayjs } from "dayjs";
-import { useMemo, useState } from "react";
+import dayjs from "dayjs";
+import { useState } from "react";
 
 import {
   datesInPage,
+  DAYS_PER_PAGE,
   type GridViewMode,
-  pageStartFor,
   stepPage,
-  WEEK_PAGE_DAYS,
 } from "../lib/dayGrid";
 import { useIsDesktop } from "./useIsDesktop";
 
-export interface DayGridLayout {
-  dates: string[];
-  today: Dayjs;
-  size: GridViewMode;
-}
-
 /** Drives the week/month day grid: the current page's dates, plus
  * arrow/swipe/"today" navigation — see src/lib/dayGrid.ts. */
-export const useDayGrid = (today: Dayjs) => {
+export const useDayGrid = () => {
+  const [today] = useState(() => dayjs());
   const [viewMode, setViewMode] = useState<GridViewMode>("week");
   const [focusDate, setFocusDate] = useState(today);
   const [direction, setDirection] = useState<-1 | 1>(1);
+
   const isDesktop = useIsDesktop();
 
-  const weekPageDays = isDesktop
-    ? WEEK_PAGE_DAYS.desktop
-    : WEEK_PAGE_DAYS.mobile;
+  const daysPerPage = isDesktop ? DAYS_PER_PAGE.desktop : DAYS_PER_PAGE.mobile;
+  const pageStart = focusDate.startOf(viewMode);
+  const isOnToday = pageStart.isSame(today.startOf(viewMode), "day");
 
-  const pageStart = useMemo(
-    () => pageStartFor(viewMode, focusDate),
-    [viewMode, focusDate]
-  );
-  const isOnToday = pageStart.isSame(pageStartFor(viewMode, today), "day");
+  const dates = datesInPage(viewMode, pageStart, daysPerPage);
 
-  const layout: DayGridLayout = useMemo(
-    () => ({
-      dates: datesInPage(viewMode, pageStart, weekPageDays),
-      today,
-      size: viewMode,
-    }),
-    [viewMode, pageStart, weekPageDays, today]
-  );
+  const dateRange = {
+    start: dates[0],
+    end: dates[dates.length - 1],
+  };
 
   const navigate = (dir: -1 | 1) => {
     setDirection(dir);
-    setFocusDate(stepPage(viewMode, pageStart, dir, weekPageDays));
+    setFocusDate(stepPage(viewMode, pageStart, dir, daysPerPage));
   };
 
   const goToToday = () => setFocusDate(today);
 
   return {
+    today,
     viewMode,
     setViewMode,
     isDesktop,
-    layout,
+    dates,
+    dateRange,
     pageStart,
     isOnToday,
     direction,

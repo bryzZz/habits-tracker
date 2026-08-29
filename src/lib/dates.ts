@@ -1,5 +1,7 @@
 import dayjs, { type Dayjs } from "dayjs";
 
+export const toISODate = (d: Dayjs): string => d.format("YYYY-MM-DD");
+
 export const formatWeekRange = (weekStart: Dayjs, dayCount: number): string => {
   const weekEnd = weekStart.add(dayCount - 1, "day");
   if (weekStart.month() === weekEnd.month()) {

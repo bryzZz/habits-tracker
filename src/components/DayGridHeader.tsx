@@ -1,28 +1,27 @@
-import dayjs from "dayjs";
-import { type FC, memo } from "react";
+import { type Dayjs } from "dayjs";
+import type { FC } from "react";
 
-import type { DayGridLayout } from "../hooks/useDayGrid";
+import { toISODate } from "../lib/dates";
 import { DayCellsRow } from "./DayCellsRow";
 import { DayLabel } from "./DayLabel";
 
 interface DayGridHeaderProps {
-  layout: DayGridLayout;
+  today: Dayjs;
+  dates: Dayjs[];
 }
 
-export const DayGridHeader: FC<DayGridHeaderProps> = memo(({ layout }) => {
-  const { today, dates } = layout;
-
+export const DayGridHeader: FC<DayGridHeaderProps> = ({ today, dates }) => {
   return (
     <DayCellsRow
       dates={dates}
       className="mb-4.5 h-12 items-center border-b border-border"
       renderDate={(date) => (
         <DayLabel
-          key={date}
+          key={toISODate(date)}
           date={date}
-          isToday={dayjs(date).isSame(today, "day")}
+          isToday={date.isSame(today, "day")}
         />
       )}
     />
   );
-});
+};

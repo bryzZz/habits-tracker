@@ -1,57 +1,82 @@
 import type { FC } from "react";
-import { useCallback } from "react";
+
+import { useHabits } from "@/hooks/useHabits";
 
 import { DayGrid } from "../components/DayGrid";
 import { EntryPopup } from "../components/EntryPopup";
 import { HiddenHabitsAccordion } from "../components/HiddenHabitsAccordion";
-import type { DayEntry, HabitsData } from "../data/types";
-import { useHabitsView } from "../data/useHabitsView";
+import { QueryBoundary } from "../components/QueryBoundary";
+import { useDayGrid } from "../hooks/useDayGrid";
 import { useEntryPopup } from "../hooks/useEntryPopup";
-import { useVisibleHabits } from "../hooks/useVisibleHabits";
 
-interface WeekPageProps {
-  data: HabitsData;
-  onSaveEntry: (entry: DayEntry) => void;
-  onToggleVisibility: (habitId: string, visible: boolean) => void;
-}
+export const WeekPage: FC = () => {
+  const {
+    dateRange,
+    today,
+    dates,
+    viewMode,
+    setViewMode,
+    isDesktop,
+    pageStart,
+    isOnToday,
+    direction,
+    navigate,
+    goToToday,
+  } = useDayGrid();
 
-export const WeekPage: FC<WeekPageProps> = ({
-  data,
-  onSaveEntry,
-  onToggleVisibility,
-}) => {
-  const { today, entriesByHabit, getOverallScoreForDate } = useHabitsView(data);
-  const { visibleHabits, hiddenHabits } = useVisibleHabits(data.habits);
-  const { openEditor, entryPopupProps } = useEntryPopup(
-    data,
+  const {
+    visibleHabits,
+    hiddenHabits,
+    habitsLoading,
+    habitsError,
     entriesByHabit,
-    onSaveEntry
-  );
+    entriesLoading,
+    entriesError,
+    streaksByHabitId,
+    overallScore,
+    handleSaveEntry,
+    handleHideHabit,
+    handleShowHabit,
+  } = useHabits(dateRange);
 
-  const handleHide = useCallback(
-    (habitId: string) => onToggleVisibility(habitId, false),
-    [onToggleVisibility]
-  );
-  const handleShow = useCallback(
-    (habitId: string) => onToggleVisibility(habitId, true),
-    [onToggleVisibility]
+  const { handleOpen: openEditor, entryPopupProps } = useEntryPopup(
+    visibleHabits,
+    entriesByHabit,
+    handleSaveEntry
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 md:px-12">
-      <DayGrid
-        today={today}
-        entries={data.entries}
-        visibleHabits={visibleHabits}
-        entriesByHabit={entriesByHabit}
-        getOverallScoreForDate={getOverallScoreForDate}
-        onCellClick={openEditor}
-        onHide={handleHide}
-      />
+    <QueryBoundary
+      isLoading={habitsLoading || entriesLoading}
+      error={habitsError ?? entriesError}
+    >
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-12">
+        <DayGrid
+          today={today}
+          dates={dates}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          isDesktop={isDesktop}
+          pageStart={pageStart}
+          isOnToday={isOnToday}
+          direction={direction}
+          navigate={navigate}
+          goToToday={goToToday}
+          visibleHabits={visibleHabits}
+          entriesByHabit={entriesByHabit}
+          streaksByHabit={streaksByHabitId}
+          overallScore={overallScore}
+          onCellClick={openEditor}
+          onHide={handleHideHabit}
+        />
 
-      <HiddenHabitsAccordion hiddenHabits={hiddenHabits} onShow={handleShow} />
+        <HiddenHabitsAccordion
+          hiddenHabits={hiddenHabits}
+          onShow={handleShowHabit}
+        />
 
-      <EntryPopup {...entryPopupProps} />
-    </div>
+        <EntryPopup {...entryPopupProps} />
+      </div>
+    </QueryBoundary>
   );
 };

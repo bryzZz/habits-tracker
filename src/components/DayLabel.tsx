@@ -1,16 +1,15 @@
-import dayjs from "dayjs";
+import { Dayjs } from "dayjs";
 import type { FC } from "react";
 
 import { cn } from "../lib/utils";
 
 interface DayLabelProps {
-  date: string;
+  date: Dayjs;
   isToday: boolean;
 }
 
 export const DayLabel: FC<DayLabelProps> = ({ date, isToday }) => {
-  const d = dayjs(date);
-  const weekday = d.format("dd");
+  const weekday = date.format("dd");
 
   return (
     <div
@@ -34,7 +33,7 @@ export const DayLabel: FC<DayLabelProps> = ({ date, isToday }) => {
           isToday && "text-foreground"
         )}
       >
-        {d.date()}
+        {date.date()}
       </div>
     </div>
   );

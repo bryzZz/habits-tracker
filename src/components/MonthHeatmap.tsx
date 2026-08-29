@@ -1,7 +1,7 @@
 import type { Dayjs } from "dayjs";
 import type { FC } from "react";
 
-import { monthGridWeeks, weekdayLabels } from "../lib/dates";
+import { monthGridWeeks, toISODate, weekdayLabels } from "../lib/dates";
 import { colorForScore } from "../lib/scoreRamp";
 
 interface MonthHeatmapProps {
@@ -28,12 +28,9 @@ export const MonthHeatmap: FC<MonthHeatmapProps> = ({ month, scoreByDate }) => {
 
       <div className="flex grow flex-col gap-1">
         {weeks.map((week) => (
-          <div
-            key={week[0].format("YYYY-MM-DD")}
-            className="grid grid-cols-7 gap-1"
-          >
+          <div key={toISODate(week[0])} className="grid grid-cols-7 gap-1">
             {week.map((d) => {
-              const iso = d.format("YYYY-MM-DD");
+              const iso = toISODate(d);
               const inMonth = d.isSame(month, "month");
               const score = inMonth ? scoreByDate.get(iso) : undefined;
               if (score === undefined) {

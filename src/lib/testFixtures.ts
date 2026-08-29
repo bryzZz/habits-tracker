@@ -1,10 +1,8 @@
 import type { DayEntry, Habit } from "../data/types";
-import { LOCAL_USER_ID } from "../data/types";
 
 export const habit = (id: string, visible: boolean): Habit => {
   return {
     id,
-    userId: LOCAL_USER_ID,
     name: id,
     priority: "priority",
     visible,
@@ -17,5 +15,5 @@ export const entry = (
   date: string,
   score: number
 ): DayEntry => {
-  return { habitId, userId: LOCAL_USER_ID, date, note: "", score };
+  return { habitId, date, note: "", score };
 };

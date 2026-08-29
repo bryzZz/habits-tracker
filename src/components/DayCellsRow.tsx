@@ -1,11 +1,12 @@
+import type { Dayjs } from "dayjs";
 import type { FC, ReactNode } from "react";
 
 import { cn } from "../lib/utils";
 
 interface DayCellsRowProps {
-  dates: string[];
+  dates: Dayjs[];
   className?: string;
-  renderDate: (date: string) => ReactNode;
+  renderDate: (date: Dayjs) => ReactNode;
 }
 
 /** Lays out one page's dates as equal-width CSS grid columns, stretched to

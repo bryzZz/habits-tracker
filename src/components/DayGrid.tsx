@@ -1,12 +1,11 @@
 import type { Dayjs } from "dayjs";
-import type { FC } from "react";
-import { useMemo } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 
+import type { HabitStreaks } from "../data/dataStore";
 import type { DayEntry, Habit } from "../data/types";
-import { useDayGrid } from "../hooks/useDayGrid";
 import { useSwipeNavigate } from "../hooks/useSwipeNavigate";
-import { formatMonthYear, formatWeekRange } from "../lib/dates";
-import { calculateStreak } from "../lib/streak";
+import { formatMonthYear, formatWeekRange, toISODate } from "../lib/dates";
+import type { GridViewMode } from "../lib/dayGrid";
 import { cn } from "../lib/utils";
 import { DayGridHeader } from "./DayGridHeader";
 import { DayGridToolbar } from "./DayGridToolbar";
@@ -15,47 +14,46 @@ import { HabitNameCell } from "./HabitNameCell";
 
 interface DayGridProps {
   today: Dayjs;
-  entries: DayEntry[];
+  dates: Dayjs[];
+  viewMode: GridViewMode;
+  setViewMode: Dispatch<SetStateAction<GridViewMode>>;
+  isDesktop: boolean;
+  pageStart: Dayjs;
+  isOnToday: boolean;
+  direction: -1 | 1;
+  navigate: (direction: -1 | 1) => void;
+  goToToday: () => void;
   visibleHabits: Habit[];
   entriesByHabit: Map<string, Map<string, DayEntry>>;
-  getOverallScoreForDate: (date: string) => number | undefined;
+  streaksByHabit: Map<string, HabitStreaks>;
+  overallScore: number | null;
   onCellClick: (habitId: string, date: string, target: HTMLElement) => void;
   onHide: (habitId: string) => void;
 }
 
 export const DayGrid: FC<DayGridProps> = ({
   today,
-  entries,
+  dates,
+  viewMode,
+  setViewMode,
+  isDesktop,
+  pageStart,
+  isOnToday,
+  direction,
+  navigate,
+  goToToday,
   visibleHabits,
   entriesByHabit,
-  getOverallScoreForDate,
+  streaksByHabit,
+  overallScore,
   onCellClick,
   onHide,
 }) => {
-  const {
-    viewMode,
-    setViewMode,
-    isDesktop,
-    layout,
-    pageStart,
-    isOnToday,
-    direction,
-    navigate,
-    goToToday,
-  } = useDayGrid(today);
   const swipeHandlers = useSwipeNavigate(navigate);
-
-  const overallScore = useMemo(() => {
-    const daily = layout.dates
-      .map((date) => getOverallScoreForDate(date))
-      .filter((s): s is number => s !== undefined);
-    if (daily.length === 0) return null;
-    return daily.reduce((a, b) => a + b, 0) / daily.length;
-  }, [layout.dates, getOverallScoreForDate]);
 
   const rangeLabel =
     viewMode === "week"
-      ? formatWeekRange(pageStart, layout.dates.length)
+      ? formatWeekRange(pageStart, dates.length)
       : formatMonthYear(pageStart);
 
   const scoreLabel =
@@ -65,7 +63,7 @@ export const DayGrid: FC<DayGridProps> = ({
         ? "Средний балл за 2 недели"
         : "Средний балл недели";
 
-  const pageKey = `${viewMode}-${pageStart.format("YYYY-MM-DD")}`;
+  const pageKey = `${viewMode}-${toISODate(pageStart)}`;
   const pageTransitionClass = cn(
     "animate-in fade-in-0 duration-150",
     direction === 1 ? "slide-in-from-right-3" : "slide-in-from-left-3"
@@ -75,7 +73,7 @@ export const DayGrid: FC<DayGridProps> = ({
     <HabitNameCell
       key={`${habit.id}-name`}
       habit={habit}
-      streak={calculateStreak(entries, habit.id, today)}
+      streak={streaksByHabit.get(habit.id)?.currentStreak ?? 0}
       onHide={onHide}
     />
   );
@@ -84,7 +82,9 @@ export const DayGrid: FC<DayGridProps> = ({
     <HabitDayCells
       key={`${habit.id}-cells`}
       habitId={habit.id}
-      layout={layout}
+      today={today}
+      dates={dates}
+      size={viewMode}
       entriesByDate={entriesByHabit.get(habit.id)}
       onCellClick={onCellClick}
     />
@@ -119,7 +119,7 @@ export const DayGrid: FC<DayGridProps> = ({
             key={pageKey}
             className={cn("min-w-0 flex-1", pageTransitionClass)}
           >
-            <DayGridHeader layout={layout} />
+            <DayGridHeader today={today} dates={dates} />
 
             <div className="flex flex-col gap-1">
               {visibleHabits.map(dayCells)}
@@ -129,7 +129,7 @@ export const DayGrid: FC<DayGridProps> = ({
       ) : (
         <div className="flex flex-col" {...swipeHandlers}>
           <div key={pageKey} className={pageTransitionClass}>
-            <DayGridHeader layout={layout} />
+            <DayGridHeader today={today} dates={dates} />
           </div>
 
           <div className="flex flex-col gap-2">
