@@ -49,6 +49,7 @@ export const useEntryPopup = (
     handleOpen,
     entryPopupProps: {
       open: open && editingHabit !== undefined,
+      entryKey: editing ? `${editing.habitId}:${editing.date}` : undefined,
       habitName: editingHabit?.name,
       dateLabel: editing
         ? dayjs(editing.date).format("dddd, D MMMM")
