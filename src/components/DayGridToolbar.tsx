@@ -1,4 +1,4 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { FC } from "react";
 
 import type { GridViewMode } from "../lib/dayGrid";
 import { cn } from "../lib/utils";
@@ -10,7 +10,7 @@ interface DayGridToolbarProps {
   scoreLabel: string;
   overallScore: number | null;
   viewMode: GridViewMode;
-  setViewMode: Dispatch<SetStateAction<GridViewMode>>;
+  setViewMode: (mode: GridViewMode) => void;
   isOnToday: boolean;
   navigate: (direction: -1 | 1) => void;
   goToToday: () => void;
@@ -89,10 +89,12 @@ export const DayGridToolbar: FC<DayGridToolbarProps> = ({
           type="single"
           variant="outline"
           value={viewMode}
-          onValueChange={(v) => v && setViewMode(v as typeof viewMode)}
+          onValueChange={(v) => v && setViewMode(v as GridViewMode)}
           className="w-full justify-center md:ml-auto md:w-fit md:justify-start"
         >
           <ToggleGroupItem value="week">Неделя</ToggleGroupItem>
+
+          <ToggleGroupItem value="twoWeeks">Две недели</ToggleGroupItem>
 
           <ToggleGroupItem value="month">Месяц</ToggleGroupItem>
         </ToggleGroup>

@@ -3,6 +3,7 @@ import type { FC } from "react";
 
 import { MonthHeatmap } from "../components/MonthHeatmap";
 import { QueryBoundary } from "../components/QueryBoundary";
+import { StatsSkeleton } from "../components/StatsSkeleton";
 import { StatTile } from "../components/StatTile";
 import { TrendLine } from "../components/TrendLine";
 import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group";
@@ -32,26 +33,27 @@ export const StatsPage: FC = () => {
   } = useStats();
 
   return (
-    <QueryBoundary
-      isLoading={habitsLoading || entriesLoading}
-      error={habitsError ?? entriesError}
-    >
-      <div className="mx-auto max-w-6xl px-4 py-8 md:px-12">
-        <div className="mb-7 flex items-center justify-between">
-          <h1 className="font-display text-2xl font-bold">Статистика</h1>
+    <div className="mx-auto max-w-6xl px-4 py-8 md:px-12">
+      <div className="mb-7 flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold">Статистика</h1>
 
-          <ToggleGroup
-            type="single"
-            variant="outline"
-            value={period}
-            onValueChange={(v) => v && setPeriod(v as typeof period)}
-          >
-            <ToggleGroupItem value="week">Неделя</ToggleGroupItem>
+        <ToggleGroup
+          type="single"
+          variant="outline"
+          value={period}
+          onValueChange={(v) => v && setPeriod(v as typeof period)}
+        >
+          <ToggleGroupItem value="week">Неделя</ToggleGroupItem>
 
-            <ToggleGroupItem value="month">Месяц</ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+          <ToggleGroupItem value="month">Месяц</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
 
+      <QueryBoundary
+        isLoading={habitsLoading || entriesLoading}
+        error={habitsError ?? entriesError}
+        loadingFallback={<StatsSkeleton />}
+      >
         <div className="mb-7 rounded-xl border border-border bg-card p-6">
           <div className="mb-4.5 flex flex-wrap items-baseline justify-between gap-2">
             <div className="font-display text-base font-semibold">
@@ -136,7 +138,7 @@ export const StatsPage: FC = () => {
             </div>
           </div>
         )}
-      </div>
-    </QueryBoundary>
+      </QueryBoundary>
+    </div>
   );
 };

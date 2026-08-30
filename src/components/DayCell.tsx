@@ -1,5 +1,6 @@
 import type { FC, MouseEvent } from "react";
 
+import type { GridViewMode } from "../lib/dayGrid";
 import { colorForScore } from "../lib/scoreRamp";
 import { cn } from "../lib/utils";
 
@@ -7,7 +8,7 @@ interface DayCellProps {
   score: number | undefined;
   isFuture: boolean;
   isToday: boolean;
-  size: "week" | "month";
+  size: GridViewMode;
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -20,8 +21,7 @@ export const DayCell: FC<DayCellProps> = ({
 }) => {
   const baseClasses = cn(
     "h-9.5 w-full border",
-    size === "week" && "rounded-md",
-    size === "month" && "rounded-xs md:rounded-sm"
+    size === "month" ? "rounded-xs md:rounded-sm" : "rounded-md"
   );
 
   if (isFuture) {
