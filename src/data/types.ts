@@ -7,12 +7,18 @@ export interface QuickAnswer {
   score: number; // 0..1
 }
 
+export interface HabitDescriptionField {
+  title: string;
+  text: string;
+}
+
 export interface Habit {
   id: string;
   name: string;
   priority: PriorityId;
   visible: boolean;
   quickAnswers: QuickAnswer[];
+  description: HabitDescriptionField[];
 }
 
 export interface DayEntry {

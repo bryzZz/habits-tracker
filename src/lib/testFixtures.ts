@@ -7,6 +7,7 @@ export const habit = (id: string, visible: boolean): Habit => {
     priority: "priority",
     visible,
     quickAnswers: [],
+    description: [],
   };
 };
 

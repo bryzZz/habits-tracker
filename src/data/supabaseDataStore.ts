@@ -7,9 +7,16 @@ import type {
   DateRange,
   DayEntry,
   Habit,
+  HabitDescriptionField,
   PriorityId,
   QuickAnswer,
 } from "./types";
+
+interface DescriptionRow {
+  title: string;
+  text: string;
+  order: number;
+}
 
 interface HabitRow {
   id: string;
@@ -17,7 +24,14 @@ interface HabitRow {
   priority: PriorityId;
   visible: boolean;
   quick_answers: QuickAnswer[];
+  habit_descriptions: DescriptionRow[];
 }
+
+const toDescription = (rows: DescriptionRow[]): HabitDescriptionField[] =>
+  rows
+    .slice()
+    .sort((a, b) => a.order - b.order)
+    .map((row) => ({ title: row.title, text: row.text }));
 
 interface EntryRow {
   habit_id: string;
@@ -46,7 +60,9 @@ export const supabaseDataStore: DataStore = {
     const rows = unwrap(
       await supabase
         .from("habits")
-        .select("id, name, priority, visible, quick_answers(text, score)"),
+        .select(
+          "id, name, priority, visible, quick_answers(text, score), habit_descriptions(title, text, order)"
+        ),
       "load habits"
     ) as HabitRow[];
 
@@ -56,6 +72,7 @@ export const supabaseDataStore: DataStore = {
       priority: row.priority,
       visible: row.visible,
       quickAnswers: row.quick_answers,
+      description: toDescription(row.habit_descriptions),
     }));
   },
 

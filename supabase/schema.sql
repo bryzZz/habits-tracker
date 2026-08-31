@@ -41,6 +41,30 @@ create policy "quick_answers_all_own" on public.quick_answers
     exists (select 1 from public.habits h where h.id = habit_id and h.user_id = auth.uid())
   );
 
+-- habit_descriptions -------------------------------------------------------
+-- One row per Atomic Habits field (ADR-0016) — free-text `title`, no enum
+-- `CHECK`, so a field can be added/renamed/removed with a plain row change,
+-- no schema migration. Same ownership-via-parent-habit RLS as quick_answers.
+create table public.habit_descriptions (
+  id uuid primary key default gen_random_uuid(),
+  habit_id uuid not null references public.habits(id) on delete cascade,
+  title text not null,
+  text text not null,
+  "order" integer not null
+);
+
+create index habit_descriptions_habit_id_idx on public.habit_descriptions(habit_id);
+
+alter table public.habit_descriptions enable row level security;
+
+create policy "habit_descriptions_all_own" on public.habit_descriptions
+  for all using (
+    exists (select 1 from public.habits h where h.id = habit_id and h.user_id = auth.uid())
+  )
+  with check (
+    exists (select 1 from public.habits h where h.id = habit_id and h.user_id = auth.uid())
+  );
+
 -- entries -----------------------------------------------------------------
 create table public.entries (
   user_id uuid not null default auth.uid() references auth.users(id),
