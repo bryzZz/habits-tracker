@@ -6,81 +6,84 @@ vendored code, regenerated from templates we don't control.
 
 ## Components
 
-Always a `const` typed with `FC`, never a `function` declaration:
+- Always a `const` typed with `FC`, never a `function` declaration:
 
-```tsx
-import type { FC } from "react";
+  ```tsx
+  import type { FC } from "react";
 
-interface FooProps {
-  label: string;
-}
+  interface FooProps {
+    label: string;
+  }
 
-const Foo: FC<FooProps> = ({ label }) => {
-  return <div>{label}</div>;
-};
-```
+  const Foo: FC<FooProps> = ({ label }) => {
+    return <div>{label}</div>;
+  };
+  ```
 
-No props → `FC` with no generic. With `memo`, wrap the arrow function itself — the annotation
-still applies to the outer `const`:
+- No props → `FC` with no generic.
+- With `memo`, wrap the arrow function itself — the annotation still applies to the outer `const`:
 
-```tsx
-const Foo: FC<FooProps> = memo(({ label }) => {
-  return <div>{label}</div>;
-});
-```
+  ```tsx
+  const Foo: FC<FooProps> = memo(({ label }) => {
+    return <div>{label}</div>;
+  });
+  ```
 
 ## Hooks
 
-Always `const`:
+- Always `const`:
 
-```ts
-const useFoo = (arg: Arg) => {
-  /* ... */
-};
-```
+  ```ts
+  const useFoo = (arg: Arg) => {
+    /* ... */
+  };
+  ```
 
 ## All functions, everywhere in `src/`
 
-Handlers and helpers inside a component/hook body, and plain module-level functions in
-`src/lib/*.ts`, are always `const` arrow functions — never `function` declarations or function
-expressions. One shape, no exceptions inside `src/`.
+- Handlers/helpers inside a component or hook body, and plain module-level functions in
+  `src/lib/*.ts`, are always `const` arrow functions — never `function` declarations or function
+  expressions. One shape, no exceptions inside `src/`.
 
 ## Exports
 
-No default exports in `src/**`. Named exports only. (Root-level config files —
-`vite.config.ts`, `vitest.config.ts` — keep default exports; that's the tooling's contract, not
-ours.)
+- No default exports in `src/**` — named exports only.
+- Root-level config files (`vite.config.ts`, `vitest.config.ts`) keep default exports — that's the
+  tooling's contract, not ours.
 
 ## Function body order
 
-Inside a component or hook body: other hook calls → derived `const`/`useMemo` → handler
-`const`s → `useEffect`/`useLayoutEffect` → `return`. Effects always come last, immediately
-before the return.
+- Inside a component or hook body: other hook calls → derived `const`/`useMemo` → handler
+  `const`s → `useEffect`/`useLayoutEffect` → `return`.
+- Effects always come last, immediately before the return.
 
 ## Early return
 
-Guard clauses over wrapping the happy path in `if`. Reference example: `App.tsx`'s `error`/
-`!data` checks at the top, returning early instead of nesting the route tree in an `if`.
+- Guard clauses over wrapping the happy path in `if`.
+- Reference example: `App.tsx`'s `error`/`!data` checks at the top, returning early instead of
+  nesting the route tree in an `if`.
 
 ## Comments
 
-At most 2 lines. Prefer none — write one only when the _why_ isn't obvious from the code itself
-(a non-obvious constraint, a workaround, a subtle invariant). Never restate what the identifiers
-already say.
+- At most 2 lines.
+- Prefer none — write one only when the _why_ isn't obvious from the code itself (a non-obvious
+  constraint, a workaround, a subtle invariant).
+- Never restate what the identifiers already say.
 
 ## Unnecessary constants
 
-Don't hoist a value to a module- or component-scope `const` unless it's used more than once, or
-exported for another module to use. A value used once, inline it at the call site — even if it's
-a long string. If inlining makes the expression hard to read, that's a signal for a `const`
-_inside_ the function, not a module-level one.
+- Don't hoist a value to a module- or component-scope `const` unless it's used more than once, or
+  exported for another module to use.
+- A value used once — inline it at the call site, even if it's a long string.
+- If inlining makes the expression hard to read, that's a signal for a `const` _inside_ the
+  function, not a module-level one.
 
 ## JSX
 
-Blank line between every pair of JSX siblings, at every nesting level — including
-`{condition && <X />}` and the result of `.map()`. No exceptions for "trivially related" pairs.
-Prettier preserves blank lines you write; it won't insert them, so this is a manual habit, not an
-autoformat.
+- Blank line between every pair of JSX siblings, at every nesting level — including
+  `{condition && <X />}` and the result of `.map()`. No exceptions for "trivially related" pairs.
+- Prettier preserves blank lines you write; it won't insert them — this is a manual habit, not an
+  autoformat.
 
 ## Tailwind classes
 
@@ -109,6 +112,7 @@ autoformat.
 
 ## Icons
 
-Try `lucide-react` first. Only build a custom icon component when lucide doesn't have it, under
-`src/components/icons/`, mirroring lucide's own prop surface (`className`, `size?`, the rest
-spread onto the `<svg>`) so it's a drop-in replacement anywhere a lucide icon would go.
+- Try `lucide-react` first.
+- Only build a custom icon component when lucide doesn't have it, under `src/components/icons/`,
+  mirroring lucide's own prop surface (`className`, `size?`, the rest spread onto the `<svg>`) so
+  it's a drop-in replacement anywhere a lucide icon would go.

@@ -10,9 +10,8 @@ Any JSX/UI code in `src/` (components, pages, routes — anywhere markup is rend
 `src/components/ui/**`, follows the shadcn skill's conventions (semantic tokens, composition
 rules).
 
-Use /tdd where possible, at pre-agreed seams.
-
-Run typechecking regularly, single test files regularly, and the full test suite once at the end.
+Run typechecking regularly, and the full existing test suite once at the end — writing new tests
+isn't required by default, but nothing existing may break.
 
 Once the full test suite passes, run `pnpm run lint` and `pnpm run build`. Both must exit clean
 before moving on — fix whatever they flag (lint autofixes what it can; anything left is a real
