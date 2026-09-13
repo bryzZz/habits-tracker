@@ -1,10 +1,13 @@
 import type { FC } from "react";
+import { useRef } from "react";
 
 import { useHabits } from "@/hooks/useHabits";
+import { useLayoutMode } from "@/hooks/useLayoutMode";
 
 import { DayGrid } from "../components/DayGrid";
 import { DayGridSkeleton } from "../components/DayGridSkeleton";
 import { DayGridToolbar } from "../components/DayGridToolbar";
+import { DayTable, type DayTableHandle } from "../components/DayTable";
 import { EntryPopup } from "../components/EntryPopup";
 import { HiddenHabitsAccordion } from "../components/HiddenHabitsAccordion";
 import { QueryBoundary } from "../components/QueryBoundary";
@@ -29,6 +32,8 @@ export const WeekPage: FC = () => {
     pageTransitionClass,
   } = useDayGrid();
 
+  const { layoutMode, setLayoutMode } = useLayoutMode();
+
   const {
     visibleHabits,
     hiddenHabits,
@@ -46,11 +51,13 @@ export const WeekPage: FC = () => {
 
   const { handleOpen: openEditor, entryPopupProps } = useEntryPopup(
     visibleHabits,
-    entriesByHabit,
     handleSaveEntry
   );
 
   const swipeHandlers = useSwipeNavigate(navigate);
+  const dayTableRef = useRef<DayTableHandle>(null);
+
+  const isGrid = layoutMode === "grid";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-12">
@@ -60,43 +67,55 @@ export const WeekPage: FC = () => {
         overallScore={overallScore}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        layoutMode={layoutMode}
+        setLayoutMode={setLayoutMode}
         isOnToday={isOnToday}
         navigate={navigate}
         goToToday={goToToday}
+        goToTableToday={() => dayTableRef.current?.scrollToToday()}
         pageKey={pageKey}
         pageTransitionClass={pageTransitionClass}
       />
 
-      <div {...(isDesktop ? {} : swipeHandlers)}>
-        <QueryBoundary
-          isLoading={habitsLoading || entriesLoading}
-          error={habitsError ?? entriesError}
-          loadingFallback={
-            <DayGridSkeleton columnCount={dates.length} isDesktop={isDesktop} />
-          }
-        >
-          <DayGrid
+      <QueryBoundary
+        isLoading={habitsLoading || (isGrid && entriesLoading)}
+        error={habitsError ?? (isGrid ? entriesError : null)}
+        loadingFallback={
+          <DayGridSkeleton columnCount={dates.length} isDesktop={isDesktop} />
+        }
+      >
+        {isGrid ? (
+          <div {...(isDesktop ? {} : swipeHandlers)}>
+            <DayGrid
+              today={today}
+              dates={dates}
+              viewMode={viewMode}
+              isDesktop={isDesktop}
+              pageKey={pageKey}
+              pageTransitionClass={pageTransitionClass}
+              visibleHabits={visibleHabits}
+              entriesByHabit={entriesByHabit}
+              streaksByHabit={streaksByHabitId}
+              onCellClick={openEditor}
+              onHide={handleHideHabit}
+            />
+          </div>
+        ) : (
+          <DayTable
+            ref={dayTableRef}
             today={today}
-            dates={dates}
-            viewMode={viewMode}
-            isDesktop={isDesktop}
-            pageKey={pageKey}
-            pageTransitionClass={pageTransitionClass}
-            visibleHabits={visibleHabits}
-            entriesByHabit={entriesByHabit}
-            streaksByHabit={streaksByHabitId}
+            habits={visibleHabits}
             onCellClick={openEditor}
-            onHide={handleHideHabit}
           />
+        )}
 
-          <HiddenHabitsAccordion
-            hiddenHabits={hiddenHabits}
-            onShow={handleShowHabit}
-          />
+        <EntryPopup {...entryPopupProps} />
 
-          <EntryPopup {...entryPopupProps} />
-        </QueryBoundary>
-      </div>
+        <HiddenHabitsAccordion
+          hiddenHabits={hiddenHabits}
+          onShow={handleShowHabit}
+        />
+      </QueryBoundary>
     </div>
   );
 };

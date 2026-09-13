@@ -10,6 +10,7 @@ interface DayCellProps {
   isToday: boolean;
   size: GridViewMode;
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
 }
 
 export const DayCell: FC<DayCellProps> = ({
@@ -18,10 +19,12 @@ export const DayCell: FC<DayCellProps> = ({
   isToday,
   size,
   onClick,
+  className,
 }) => {
   const baseClasses = cn(
     "h-9.5 w-full border",
-    size === "month" ? "rounded-xs md:rounded-sm" : "rounded-md"
+    size === "month" ? "rounded-xs md:rounded-sm" : "rounded-md",
+    className
   );
 
   if (isFuture) {

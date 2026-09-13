@@ -17,7 +17,12 @@ interface HabitRowProps {
   dates: Dayjs[];
   viewMode: GridViewMode;
   entriesByDate: Map<string, DayEntry> | undefined;
-  onCellClick: (habitId: string, date: string, target: HTMLElement) => void;
+  onCellClick: (
+    habitId: string,
+    date: string,
+    target: HTMLElement,
+    entry: DayEntry | undefined
+  ) => void;
   onHide: (habitId: string) => void;
   pageKey: string;
   pageTransitionClass: string;

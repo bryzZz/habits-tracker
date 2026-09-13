@@ -19,7 +19,7 @@ export const useHabits = (dateRange: DateRange) => {
     error: entriesError,
   } = useGetEntries(dateRange);
 
-  const { mutate: saveEntry } = useSaveEntryMutation(dateRange);
+  const { mutate: saveEntry } = useSaveEntryMutation();
 
   const { mutate: mutateVisibility } = useHabitVisibilityMutation();
 

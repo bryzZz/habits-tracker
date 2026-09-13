@@ -12,6 +12,23 @@ export const splitHabitsByVisibility = (
   };
 };
 
+/** Every consumer wants entries pre-indexed by habit then date. */
+export const indexEntriesByHabit = (
+  entries: DayEntry[]
+): Map<string, Map<string, DayEntry>> => {
+  const map = new Map<string, Map<string, DayEntry>>();
+
+  for (const entry of entries) {
+    if (!map.has(entry.habitId)) {
+      map.set(entry.habitId, new Map());
+    }
+
+    map.get(entry.habitId)!.set(entry.date, entry);
+  }
+
+  return map;
+};
+
 export const upsertEntry = (
   entries: DayEntry[],
   entry: DayEntry

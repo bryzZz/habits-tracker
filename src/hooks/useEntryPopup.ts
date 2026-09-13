@@ -7,18 +7,30 @@ interface Editing {
   habitId: string;
   date: string;
   anchorRect: DOMRect;
+  entry: DayEntry | undefined;
 }
 
+/** Owned once by `WeekPage`, shared by grid and table cells — the caller
+ * already has the clicked entry, so it's passed in rather than looked up. */
 export const useEntryPopup = (
   habits: Habit[],
-  entriesByHabit: Map<string, Map<string, DayEntry>>,
   onSaveEntry: (entry: DayEntry) => void
 ) => {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Editing | null>(null);
 
-  const handleOpen = (habitId: string, date: string, target: HTMLElement) => {
-    setEditing({ habitId, date, anchorRect: target.getBoundingClientRect() });
+  const handleOpen = (
+    habitId: string,
+    date: string,
+    target: HTMLElement,
+    entry: DayEntry | undefined
+  ) => {
+    setEditing({
+      habitId,
+      date,
+      anchorRect: target.getBoundingClientRect(),
+      entry,
+    });
     setOpen(true);
   };
 
@@ -40,10 +52,6 @@ export const useEntryPopup = (
   };
 
   const editingHabit = editing && habits.find((h) => h.id === editing.habitId);
-  const editingEntry =
-    editingHabit &&
-    editing &&
-    entriesByHabit.get(editingHabit.id)?.get(editing.date);
 
   return {
     handleOpen,
@@ -55,8 +63,8 @@ export const useEntryPopup = (
         ? dayjs(editing.date).format("dddd, D MMMM")
         : undefined,
       quickAnswers: editingHabit?.quickAnswers,
-      initialScore: editingEntry?.score ?? 0,
-      initialNote: editingEntry?.note ?? "",
+      initialScore: editing?.entry?.score ?? 0,
+      initialNote: editing?.entry?.note ?? "",
       anchorRect: editing?.anchorRect,
       onSave: handleSave,
       onClose: handleClose,

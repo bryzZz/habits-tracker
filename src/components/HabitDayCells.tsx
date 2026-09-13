@@ -13,7 +13,12 @@ interface HabitDayCellsProps {
   dates: Dayjs[];
   size: GridViewMode;
   entriesByDate: Map<string, DayEntry> | undefined;
-  onCellClick: (habitId: string, date: string, target: HTMLElement) => void;
+  onCellClick: (
+    habitId: string,
+    date: string,
+    target: HTMLElement,
+    entry: DayEntry | undefined
+  ) => void;
 }
 
 export const HabitDayCells: FC<HabitDayCellsProps> = ({
@@ -28,18 +33,23 @@ export const HabitDayCells: FC<HabitDayCellsProps> = ({
     <DayCellsRow
       dates={dates}
       className="h-11.5"
-      renderDate={(date) => (
-        <DayCell
-          key={toISODate(date)}
-          score={entriesByDate?.get(toISODate(date))?.score}
-          isFuture={date.isAfter(today, "day")}
-          isToday={date.isSame(today, "day")}
-          size={size}
-          onClick={(e) =>
-            onCellClick(habitId, toISODate(date), e.currentTarget)
-          }
-        />
-      )}
+      renderDate={(date) => {
+        const dateISO = toISODate(date);
+        const entry = entriesByDate?.get(dateISO);
+
+        return (
+          <DayCell
+            key={dateISO}
+            score={entry?.score}
+            isFuture={date.isAfter(today, "day")}
+            isToday={date.isSame(today, "day")}
+            size={size}
+            onClick={(e) =>
+              onCellClick(habitId, dateISO, e.currentTarget, entry)
+            }
+          />
+        );
+      }}
     />
   );
 };

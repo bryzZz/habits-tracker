@@ -1,20 +1,38 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  type QueryKey,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
-import { toISODate } from "../lib/dates";
+import { isISODateInRange } from "../lib/dates";
 import { upsertEntry } from "../lib/habitsData";
 import { supabaseDataStore } from "./supabaseDataStore";
-import type { DateRange, DayEntry } from "./types";
+import type { DayEntry } from "./types";
 
-/** Saves within the same `[start, end]` window `useGetEntries` was called
- * with, so the optimistic update patches the right cache entry. */
-export const useSaveEntryMutation = (dateRange: DateRange) => {
+/** Matches any cached `["entries", startISO, endISO]` query covering `date` —
+ * the grid's one fixed range, or any of the table's several chunk queries. */
+const entriesQueryCoversDate = (queryKey: QueryKey, date: string): boolean => {
+  const [key, startISO, endISO] = queryKey;
+  return (
+    key === "entries" &&
+    typeof startISO === "string" &&
+    typeof endISO === "string" &&
+    isISODateInRange(date, startISO, endISO)
+  );
+};
+
+export const useSaveEntryMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (entry: DayEntry) => supabaseDataStore.saveEntry(entry),
     onMutate: (entry) => {
-      queryClient.setQueryData<DayEntry[]>(
-        ["entries", toISODate(dateRange.start), toISODate(dateRange.end)],
+      queryClient.setQueriesData<DayEntry[]>(
+        {
+          queryKey: ["entries"],
+          predicate: (query) =>
+            entriesQueryCoversDate(query.queryKey, entry.date),
+        },
         (prev) => (prev ? upsertEntry(prev, entry) : prev)
       );
     },

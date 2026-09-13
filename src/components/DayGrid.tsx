@@ -19,7 +19,12 @@ interface DayGridProps {
   visibleHabits: Habit[];
   entriesByHabit: Map<string, Map<string, DayEntry>>;
   streaksByHabit: Map<string, HabitStreaks>;
-  onCellClick: (habitId: string, date: string, target: HTMLElement) => void;
+  onCellClick: (
+    habitId: string,
+    date: string,
+    target: HTMLElement,
+    entry: DayEntry | undefined
+  ) => void;
   onHide: (habitId: string) => void;
 }
 

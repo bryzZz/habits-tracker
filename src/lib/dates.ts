@@ -2,6 +2,13 @@ import dayjs, { type Dayjs } from "dayjs";
 
 export const toISODate = (d: Dayjs): string => d.format("YYYY-MM-DD");
 
+/** ISO `YYYY-MM-DD` strings compare correctly as plain strings. */
+export const isISODateInRange = (
+  dateISO: string,
+  startISO: string,
+  endISO: string
+): boolean => dateISO >= startISO && dateISO <= endISO;
+
 export const formatWeekRange = (weekStart: Dayjs, dayCount: number): string => {
   const weekEnd = weekStart.add(dayCount - 1, "day");
   if (weekStart.month() === weekEnd.month()) {
